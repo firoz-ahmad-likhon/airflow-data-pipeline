@@ -24,6 +24,9 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
    docker-compose exec -it airflow-webserver bash
    ```
 
+## Precautions
+Remove `config` and `dags/quality/gx` folders if any error occurs during the setup.
+
 ## Testing
 It is recommended to perform unit test before commiting the code. To run unit test, ensure `ENV=dev` in `.env` and run the following command:
 
@@ -41,17 +44,11 @@ Basic test:
 python dags/dag_psr_sync.py
 ```
 
-Debugging:
-Change the dag call `psr_sync()` to
+Task test:
 ```
-if __name__ == "__main__":
-    psr_sync().test()
+airflow tasks test  psr_sync parameterize
 ```
-and then run:
-```
-python dags/dag_psr_sync.py
-```
-
+**Note:** The `parameterize` is the task name in the dag. Switch to other task name it needed.
 
 ## Type Checking and Linting
 This repo uses `pre-commit` hooks to check type and linting before committing the code.
