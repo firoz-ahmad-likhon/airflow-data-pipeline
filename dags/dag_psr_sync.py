@@ -3,10 +3,10 @@ import pendulum
 from typing import Any, cast
 
 from airflow.exceptions import AirflowException
-from airflow.utils.edgemodifier import Label
+from airflow.sdk import Label
 from airflow.utils.trigger_rule import TriggerRule
-from airflow.decorators import dag, task, task_group
-from airflow.models.param import Param
+from airflow.sdk import dag, task, task_group
+from airflow.sdk import Param
 from airflow.models import DagRun
 
 from model.destination import DestinationPostgreSQL as Destination
@@ -16,9 +16,9 @@ from validation.parameter_validation import ParameterValidator as Validator
 from validation.data_validation import DataValidator
 
 # Use the Airflow task logger
-logger = logging.getLogger("airflow.task")
+logger = logging.getLogger("dag_psr_sync")
 
-# Default date to identify the logical DAG run
+# Default date for parameter
 DEFAULT_DATE = pendulum.now(tz="UTC").to_iso8601_string()
 
 
@@ -35,13 +35,13 @@ DEFAULT_DATE = pendulum.now(tz="UTC").to_iso8601_string()
         "date_from": Param(
             default=DEFAULT_DATE,
             type="string",
-            format="date-time",
+            format="full-date",
             description="Date From",
         ),
         "date_to": Param(
             default=DEFAULT_DATE,
             type="string",
-            format="date-time",
+            format="full-date",
             description="Date To",
         ),
     },
@@ -58,7 +58,7 @@ def psr_sync() -> None:
         date_to = params["date_to"]
 
         # System generated DAG run
-        if not dag_run.external_trigger:
+        if dag_run.run_type != "manual":
             date_param = Helper.date_param(dag_run.logical_date)
             return {"date_from": date_param, "date_to": date_param}
 
