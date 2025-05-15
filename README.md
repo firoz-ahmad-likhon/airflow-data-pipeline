@@ -25,9 +25,11 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
    ```
 
 ## Testing
-It is recommended to perform unit test before commiting the code. To run unit test, run the following command:
+It is recommended to perform unit test before commiting the code. To run unit test, ensure `ENV=dev` in `.env` and run the following command:
 
-`pytest`
+```
+pytest
+```
 
 The test contains the following:
 1. Integrity test on the Dag.
@@ -54,6 +56,18 @@ python dags/dag_psr_sync.py
 ## Type Checking and Linting
 This repo uses `pre-commit` hooks to check type and linting before committing the code.
 
+Virtual environment:
+```
+python -m venv .venv
+```
+Activate:
+```
+source .venv/bin/activate
+```
+In Windows, use:
+```
+.venv\Scripts\activate
+```
 Install:
 ```
 pip install pre-commit

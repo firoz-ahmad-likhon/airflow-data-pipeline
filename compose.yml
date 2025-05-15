@@ -93,7 +93,7 @@ x-airflow-common:
 
 services:
   postgres:
-    image: postgres:13
+    image: postgres:15.13
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
@@ -290,8 +290,8 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-  database:
-    image: postgres:13
+  app-db:
+    image: postgres:15.13
     ports:
       - "5432:5432"
     environment:
@@ -299,9 +299,9 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: postgres
     volumes:
-      - database-data:/var/lib/database/data
+      - app-db-data:/var/lib/app-db/data
     restart: unless-stopped
 
 volumes:
   postgres-db-volume:
-  database-data:
+  app-db-data:
