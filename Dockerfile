@@ -23,10 +23,5 @@ RUN pip install \
     pytest-mock==3.14.0 \
     types-requests==2.32.0.20240914
 
-# Copy relevant configuration files for development
-COPY --chown=airflow:airflow .ruff.toml ./
-COPY --chown=airflow:airflow .mypy.ini ./
-COPY --chown=airflow:airflow pytest.ini ./
-
 EXPOSE 8080
 CMD ["airflow", "webserver"]
