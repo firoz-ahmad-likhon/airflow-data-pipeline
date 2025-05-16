@@ -95,9 +95,9 @@ services:
   postgres:
     image: postgres:15.13
     environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
+      POSTGRES_USER: ${AIRFLOW_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${AIRFLOW_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${AIRFLOW_POSTGRES_DB}
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
@@ -337,18 +337,18 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
-  app-db:
+  app-postgres:
     image: postgres:15.13
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - app-db-data:/var/lib/app-db/data
+      - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
 
 volumes:
   postgres-db-volume:
-  app-db-data:
+  postgres-data:
