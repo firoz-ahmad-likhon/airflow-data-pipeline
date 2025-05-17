@@ -1,14 +1,13 @@
 import logging
 import pendulum
 from typing import Any, cast
-
 from airflow.exceptions import AirflowException
-from airflow.sdk import Label
-from airflow.utils.trigger_rule import TriggerRule
 from airflow.sdk import dag, task, task_group
 from airflow.sdk import Param
+from airflow.sdk import Label
+from airflow.utils.trigger_rule import TriggerRule
+from airflow.utils.types import DagRunType
 from airflow.models import DagRun
-
 from model.destination import DestinationPostgreSQL as Destination
 from model.source import SourceAPI as Source
 from helper.api_helper import APIHelper as Helper
@@ -23,8 +22,8 @@ DEFAULT_DATE = pendulum.now(tz="UTC").to_iso8601_string()
 
 
 @dag(
-    schedule="*/30 * * * *",  # Run every 30 minutes
-    start_date=pendulum.datetime(2024, 10, 13, 10, 45, 0, tz="UTC"),
+    schedule="5,35 * * * *",  # Run at minute 5 and 35 of every hour
+    start_date=pendulum.datetime(2025, 5, 10, 10, 45, 0, tz="UTC"),
     catchup=False,
     tags=["half hourly"],
     default_args={
@@ -45,7 +44,7 @@ DEFAULT_DATE = pendulum.now(tz="UTC").to_iso8601_string()
             description="Date To",
         ),
     },
-    description="A ETL DAG for sync Actual or estimated wind and solar power generation data from API to PostgreSQL",
+    description="An ETL DAG for sync Actual or estimated wind and solar power generation data from API to PostgreSQL",
 )
 def psr_sync() -> None:
     """ETL DAG for psr data."""
@@ -53,24 +52,30 @@ def psr_sync() -> None:
     @task(task_display_name="Parameterize the dates", retries=0)
     def parameterize(params: dict[str, Any], dag_run: DagRun) -> dict[str, Any]:
         """Validate the dates and return valid dates or raise an exception."""
-        # Get the user inputs or system generated DAG run date
-        date_from = params["date_from"]
-        date_to = params["date_to"]
+        run_type = dag_run.run_type
+        logical_date = pendulum.instance(
+            dag_run.logical_date or pendulum.now(tz="UTC"),
+        )  # testing may not have a logical date
 
-        # System generated DAG run
-        if dag_run.run_type != "manual":
-            date_param = Helper.date_param(dag_run.logical_date)
-            return {"date_from": date_param, "date_to": date_param}
+        if run_type == DagRunType.MANUAL:
+            # Validate user-provided params
+            validator = Validator(params["date_from"], params["date_to"])
+            if not validator.validate():
+                raise AirflowException(validator.errors[-1])
+            date_from = Helper.floored_to_30_min(validator.date_from)
+            date_to = Helper.floored_to_30_min(validator.date_to)
 
-        # Validate the user inputs
-        valid = Validator(date_from, date_to)
-        if valid.validate():
-            return {
-                "date_from": Helper.floored_to_30_min(valid.date_from),
-                "date_to": Helper.floored_to_30_min(valid.date_to),
-            }
+        elif run_type == DagRunType.BACKFILL_JOB:
+            date_from = date_to = Helper.floored_to_30_min(logical_date)
+
         else:
-            raise AirflowException(valid.errors[-1])
+            # Default case: scheduled, etc.
+            date_from = date_to = Helper.date_param(logical_date)
+
+        return {
+            "date_from": date_from,
+            "date_to": date_to,
+        }
 
     @task_group(group_id="Processor", tooltip="Data processing unit")
     def source(parameters: dict[str, str]) -> Any:
