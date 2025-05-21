@@ -1,4 +1,5 @@
 from validation.parameter_validation import ParameterValidator
+import pytest
 
 
 class TestParameterValidator:
@@ -70,3 +71,20 @@ class TestParameterValidator:
         """
         parameter_validator.date_from = parameter_validator.date_from.add(minutes=8)
         assert parameter_validator.validate_minutes() is False
+
+    @pytest.mark.parametrize(
+        ("dirty", "expected"),
+        [
+            ("2025-05-20T12:00:00.123Z:00+00", "2025-05-20T12:00:00Z"),
+            ("2025-05-20T12:00:00.000Z", "2025-05-20T12:00:00Z"),
+            ("2025-05-20T12:00:00+00:00", "2025-05-20T12:00:00Z"),
+            ("2025-05-20T12:00:00.456+00:00", "2025-05-20T12:00:00Z"),
+        ],
+    )
+    def test_clean_date_param(self, dirty: str, expected: str) -> None:
+        """Test clean date parameter.
+
+        :param dirty: Dirty date.
+        :param expected: Expected clean date.
+        """
+        assert ParameterValidator.clean(dirty) == expected

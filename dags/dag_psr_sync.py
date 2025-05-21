@@ -18,7 +18,7 @@ from validation.data_validation import DataValidator
 logger = logging.getLogger("dag_psr_sync")
 
 # Default date for parameter
-DEFAULT_DATE = pendulum.now(tz="UTC").to_iso8601_string()
+DEFAULT_DATE = Helper.floored_to_30_min(pendulum.now(tz="UTC")).to_iso8601_string()
 
 
 @dag(
@@ -34,13 +34,13 @@ DEFAULT_DATE = pendulum.now(tz="UTC").to_iso8601_string()
         "date_from": Param(
             default=DEFAULT_DATE,
             type="string",
-            format="full-date",
+            format="date-time",
             description="Date From",
         ),
         "date_to": Param(
             default=DEFAULT_DATE,
             type="string",
-            format="full-date",
+            format="date-time",
             description="Date To",
         ),
     },

@@ -1,4 +1,5 @@
 from typing import cast
+import re
 import pendulum
 from .validator import Validator
 
@@ -20,14 +21,35 @@ class ParameterValidator(Validator):
         try:
             self.date_from: pendulum.DateTime = cast(
                 pendulum.DateTime,
-                pendulum.parse(date_from),
+                pendulum.parse(self.clean(date_from)),
             )
             self.date_to: pendulum.DateTime = cast(
                 pendulum.DateTime,
-                pendulum.parse(date_to),
+                pendulum.parse(self.clean(date_to)),
             )
         except ValueError:
             self.errors.append("Expected format is 'YYYY-MM-DD HH:MM'.")
+
+    @staticmethod
+    def clean(dt: str) -> str:
+        """Normalize datetime strings from UI input.
+
+        Removes unexpected parts and enforces ISO8601 UTC format.
+        """
+        if not isinstance(dt, str):
+            raise ValueError("Datetime input must be a string.")
+
+        # Normalize +00:00 to Z (unify UTC formats)
+        dt = dt.replace("+00:00", "Z")
+
+        # Strip malformed suffixes like ':00+00:00' after 'Z'
+        if "Z" in dt:
+            dt = dt.split("Z")[0] + "Z"
+
+        # Truncate milliseconds if present
+        dt = re.sub(r"\.\d{3,6}", "", dt)
+
+        return dt
 
     def validate_minutes(self) -> bool:
         """Ensure minutes are either 00 or 30."""
