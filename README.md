@@ -27,6 +27,11 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
 ## Precautions
 Remove `config` and `dags/quality/gx` folders if any error occurs during the setup.
 
+## Dag run
+- When you trigger the dag manually, the input date time will UTC time.
+- When you trigger the backfill dag, the input date time will be in the local time zone. So, output will be converted to UTC time.
+- Logical time is in UTC time.
+
 ## Testing
 It is recommended to perform unit test before commiting the code. To run unit test, ensure `ENV=dev` in `.env` and run the following command:
 
