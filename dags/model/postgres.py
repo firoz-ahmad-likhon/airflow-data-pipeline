@@ -2,82 +2,73 @@ import logging
 import os
 import psycopg2
 from psycopg2 import extras
-from psycopg2._psycopg import connection
+from psycopg2.extensions import connection
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, cast
 
 
 class PostgresSQL:
     """The class is responsible for database connection and operations."""
 
-    instance = None
-
-    def __new__(cls) -> "PostgresSQL":
-        """Ensure only one instance of PostgresSQL class is created."""
-        if not cls.instance:
-            cls.instance = super().__new__(cls)
-        return cls.instance
-
     def __init__(self) -> None:
         """Initialize PostgresSQL class."""
-        self.connection = None
+        self.conn_config = self._get_conn_config()
 
-    def connect(self) -> connection:
-        """Establish connection with PostgresSQL database.
+    def _get_conn_config(self) -> dict[str, Any]:
+        """Get DB config from environment variables."""
+        dsn = os.getenv("POSTGRES_CONNECTION_STRING")
+        if dsn:
+            return {"dsn": dsn}
+        return {
+            "host": os.getenv("POSTGRES_HOST"),
+            "dbname": os.getenv("POSTGRES_DB"),
+            "user": os.getenv("POSTGRES_USER"),
+            "password": os.getenv("POSTGRES_PASSWORD"),
+            "port": int(os.getenv("POSTGRES_PORT", "5432")),
+        }
 
-        If the connection already exists, return the existing connection.
-        """
-        if not self.connection:
-            try:
-                self.connection = psycopg2.connect(
-                    os.environ["POSTGRES_CONNECTION_STRING"],
-                )
-            except psycopg2.Error as e:
-                logging.error("Error connecting to database:" + str(e))
-        return self.connection
+    def _get_connection(self) -> connection:
+        """Establish and return a new connection."""
+        try:
+            return psycopg2.connect(**self.conn_config)
+        except psycopg2.Error as e:
+            logging.error("Error connecting to the database: %s", str(e))
+            raise
 
-    def disconnect(self) -> None:
-        """Disconnect the connection with PostgresSQL database."""
-        if self.connection is not None and self.connection.closed == 0:
-            self.connection.close()
+    def query(self, query: str, params: Sequence[Any] | None = None) -> None:
+        """Execute a query without return."""
+        try:
+            with self._get_connection() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(query, params)
+        except Exception as e:
+            logging.error("Query execution failed: %s\nError: %s", query, e)
+            raise
 
-    def query(self, query: str) -> None:
-        """Run a query.
+    def bulk_insert(self, query: str, data: Sequence[tuple[Any, ...]]) -> None:
+        """Run a batch insert."""
+        with self._get_connection() as conn:
+            with conn.cursor() as cursor:
+                extras.execute_values(cursor, query, data)
 
-        @param query: sql query
-        """
-        with self.connection.cursor() as cursor:
-            cursor.execute(query)
-            self.connection.commit()
+    def fetch(
+        self,
+        query: str,
+        params: Sequence[Any] | None = None,
+    ) -> list[tuple[Any, ...]]:
+        """Fetch all rows from a query."""
+        with self._get_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, params)
+                return cast(list[tuple[Any, ...]], cursor.fetchall())
 
-    def bulk_insert(self, query: str, data: Sequence[Any]) -> None:
-        """Run a batch insert.
-
-        @param query: sql query
-        @param data: list of tuples of data
-        """
-        with self.connection.cursor() as cursor:
-            extras.execute_values(cursor, query, data)
-            self.connection.commit()
-
-    def fetch(self, query: str) -> list[tuple[Any, ...]] | Any:
-        """Acquire data.
-
-        @param query: sql query
-        @return: list of tuples of data
-        """
-        with self.connection.cursor() as cursor:
-            cursor.execute(query)
-
-            return cursor.fetchall()
-
-    def single(self, query: str) -> tuple[Any, ...] | Any:
-        """Acquire data.
-
-        @param query: sql query
-        @return: tuple of data
-        """
-        with self.connection.cursor() as cursor:
-            cursor.execute(query)
-
-            return cursor.fetchone()
+    def single(
+        self,
+        query: str,
+        params: Sequence[Any] | None = None,
+    ) -> tuple[Any, ...] | None:
+        """Fetch a single row from a query."""
+        with self._get_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, params)
+                return cast(tuple[Any, ...] | None, cursor.fetchone())
