@@ -64,4 +64,3 @@ def destination() -> Generator[DestinationPostgreSQL, None, None]:
 
     # Drop the table after the session ends
     dest.query(f"DROP TABLE IF EXISTS {dest.TABLE_NAME};")
-    dest.disconnect()

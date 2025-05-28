@@ -10,8 +10,6 @@ class DestinationPostgreSQL(PostgresSQL):
         """Initialize class."""
         super().__init__()
 
-        self.connect()  # Instantiate a connection
-
     def table_maintenance(self) -> None:
         """Create table if it doesn't exist."""
         self.query(
@@ -36,7 +34,6 @@ class DestinationPostgreSQL(PostgresSQL):
         @param data: data to be inserted
         """
         if data:
-            # self.bulk_insert(f'INSERT INTO {self.TABLE_NAME} (curve_name, date, value) VALUES %s', data)
             self.bulk_insert(
                 f"""
                 INSERT INTO {self.TABLE_NAME} (curve_name, curve_date, value)
