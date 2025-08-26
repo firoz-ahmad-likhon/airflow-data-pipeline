@@ -53,7 +53,7 @@ x-airflow-common:
   build:
     context: .
     dockerfile: Dockerfile
-    target: ${ENV}
+    target: ${ENV:-prod}
   env_file:
     - .env
   environment:
