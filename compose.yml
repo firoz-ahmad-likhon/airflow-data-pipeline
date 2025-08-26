@@ -179,6 +179,11 @@ services:
   airflow-worker:
     <<: *airflow-common
     command: celery worker
+    environment:
+      <<: *airflow-common-env
+      # Required to handle warm shutdown of the celery workers properly
+      # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
+      DUMB_INIT_SETSID: "0"
     healthcheck:
       # yamllint disable rule:line-length
       test:
@@ -188,11 +193,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    environment:
-      <<: *airflow-common-env
-      # Required to handle warm shutdown of the celery workers properly
-      # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
-      DUMB_INIT_SETSID: "0"
     restart: always
     depends_on:
       <<: *airflow-common-depends-on
@@ -310,16 +310,16 @@ services:
 
   airflow-cli:
     <<: *airflow-common
-    profiles:
-      - debug
-    environment:
-      <<: *airflow-common-env
-      CONNECTION_CHECK_MAX_COUNT: "0"
     # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
     command:
       - bash
       - -c
       - airflow
+    environment:
+      <<: *airflow-common-env
+      CONNECTION_CHECK_MAX_COUNT: "0"
+    profiles:
+      - debug
     depends_on:
       <<: *airflow-common-depends-on
 
@@ -329,8 +329,6 @@ services:
   flower:
     <<: *airflow-common
     command: celery flower
-    profiles:
-      - flower
     ports:
       - "5555:5555"
     healthcheck:
@@ -340,6 +338,8 @@ services:
       retries: 5
       start_period: 30s
     restart: always
+    profiles:
+      - flower
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -357,13 +357,13 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+    restart: unless-stopped
     networks:
       - airflow-net
 
