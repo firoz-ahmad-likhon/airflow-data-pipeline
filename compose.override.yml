@@ -1,0 +1,12 @@
+# Attach volumes for dev environment
+
+x-airflow-volumes: &airflow-volumes
+  volumes:
+    - ${AIRFLOW_PROJ_DIR:-.}/tests:/opt/airflow/tests
+
+services:
+  airflow-apiserver:
+    <<: *airflow-volumes
+
+  airflow-cli:
+    <<: *airflow-volumes
