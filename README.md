@@ -18,14 +18,9 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
    ```
    docker-compose up -d --build
    ```
-4.  [airflow UI](http://localhost:8080). The credentials are `airflow` and `airflow`.
-5. To access the server:
-   ```
-   docker-compose exec -it airflow-webserver bash
-   ```
 
 ## Precautions
-Remove `config` and `dags/quality/gx` folders if any error occurs during the setup.
+Remove `config` and `dags/quality/gx` folders if any error occurs during the setup. To clean up the log remove `logs` folder.
 
 ## Dag run
 - When you trigger the dag manually, the input date time will UTC time.
@@ -33,7 +28,13 @@ Remove `config` and `dags/quality/gx` folders if any error occurs during the set
 - Logical time is in UTC time.
 
 ## Testing
-It is recommended to perform unit test before commiting the code. To run unit test, ensure `ENV=dev` in `.env` and run the following command:
+It is recommended to perform unit test before commiting the code. To run unit test, ensure `ENV=dev` in `.env`.
+
+To access the server:
+```
+docker-compose exec -it airflow-apiserver bash
+```
+and run the following command:
 
 ```
 pytest
