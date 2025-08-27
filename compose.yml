@@ -53,7 +53,7 @@ x-airflow-common:
   build:
     context: .
     dockerfile: Dockerfile
-    target: ${ENV}
+    target: ${ENV:-prod}
   env_file:
     - .env
   environment:
@@ -82,7 +82,6 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-    - ${AIRFLOW_PROJ_DIR:-.}/tests:/opt/airflow/tests
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -90,10 +89,14 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
+  networks:
+    - airflow-net
 
 services:
   postgres:
     image: postgres:15.13
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${AIRFLOW_POSTGRES_USER}
       POSTGRES_PASSWORD: ${AIRFLOW_POSTGRES_PASSWORD}
@@ -106,6 +109,8 @@ services:
       retries: 5
       start_period: 5s
     restart: always
+    networks:
+      - airflow-net
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -120,6 +125,8 @@ services:
       retries: 50
       start_period: 30s
     restart: always
+    networks:
+      - airflow-net
 
   airflow-apiserver:
     <<: *airflow-common
@@ -171,6 +178,11 @@ services:
   airflow-worker:
     <<: *airflow-common
     command: celery worker
+    environment:
+      <<: *airflow-common-env
+      # Required to handle warm shutdown of the celery workers properly
+      # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
+      DUMB_INIT_SETSID: "0"
     healthcheck:
       # yamllint disable rule:line-length
       test:
@@ -180,11 +192,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    environment:
-      <<: *airflow-common-env
-      # Required to handle warm shutdown of the celery workers properly
-      # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
-      DUMB_INIT_SETSID: "0"
     restart: always
     depends_on:
       <<: *airflow-common-depends-on
@@ -302,16 +309,16 @@ services:
 
   airflow-cli:
     <<: *airflow-common
-    profiles:
-      - debug
-    environment:
-      <<: *airflow-common-env
-      CONNECTION_CHECK_MAX_COUNT: "0"
     # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
     command:
       - bash
       - -c
       - airflow
+    environment:
+      <<: *airflow-common-env
+      CONNECTION_CHECK_MAX_COUNT: "0"
+    profiles:
+      - debug
     depends_on:
       <<: *airflow-common-depends-on
 
@@ -321,8 +328,6 @@ services:
   flower:
     <<: *airflow-common
     command: celery flower
-    profiles:
-      - flower
     ports:
       - "5555:5555"
     healthcheck:
@@ -332,6 +337,8 @@ services:
       retries: 5
       start_period: 30s
     restart: always
+    profiles:
+      - flower
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -341,20 +348,28 @@ services:
     image: postgres:15.13
     ports:
       - "5432:5432"
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+    restart: unless-stopped
+    networks:
+      - airflow-net
 
 volumes:
   postgres-db-volume:
   postgres-data:
+
+networks:
+  airflow-net:
+    driver: bridge

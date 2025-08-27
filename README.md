@@ -14,9 +14,19 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
 ## DEV SETUP
 1. Clone the repo.
 2. Copy the `.env.example` to `.env` and update the values as per your environment.
-3. Up the airflow docker containers:
+3. Set `ENV=dev` in `.env`
+4. Up the airflow docker containers:
    ```
    docker-compose up -d --build
+   ```
+
+## PROD SETUP
+1. Clone the repo.
+2. Copy the `.env.example` to `.env` and update the values as per your environment.
+3. Set `ENV=prod` in `.env`
+4. Up the airflow docker containers:
+   ```
+   docker compose -f compose.yml up -d
    ```
 
 ## Precautions
