@@ -21,11 +21,14 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
    ```
 
 ## PROD SETUP
-1. Set `ENV=prod` in `.env`
-2. Up the airflow docker containers:
+1. Clone the repo.
+2. Copy the `.env.example` to `.env` and update the values as per your environment.
+3. Set `ENV=prod` in `.env`
+4. Up the airflow docker containers:
    ```
    docker compose -f compose.yml up -d
    ```
+
 ## Precautions
 Remove `config` and `dags/quality/gx` folders if any error occurs during the setup. To clean up the log remove `logs` folder.
 
