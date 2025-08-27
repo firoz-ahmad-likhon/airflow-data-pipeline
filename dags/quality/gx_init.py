@@ -81,13 +81,14 @@ class GXInitiator:
     @classmethod
     def add_validation_results_store_backend(cls) -> None:
         """Configure a database store for storing validation results."""
+        url = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT', '5432')}/{os.getenv('POSTGRES_DB')}"
         cls.context.add_store(
             "validation_results_store",
             {
                 "class_name": "ValidationResultsStore",
                 "store_backend": {
                     "class_name": "DatabaseStoreBackend",
-                    "url": os.environ["GX_POSTGRES_CONNECTION_STRING"],
+                    "url": url,
                     "table_name": os.environ["GX_TABLE_NAME"],
                 },
             },

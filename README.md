@@ -17,7 +17,7 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
 3. Set `ENV=dev` in `.env`
 4. Up the airflow docker containers:
    ```
-   docker-compose up -d --build
+   docker compose up -d --build
    ```
 
 ## PROD SETUP
@@ -26,7 +26,7 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
 3. Set `ENV=prod` in `.env`
 4. Up the airflow docker containers:
    ```
-   docker compose -f compose.yml up -d
+   docker compose -f compose.yml up -d --build
    ```
 
 ## Precautions
@@ -42,7 +42,7 @@ It is recommended to perform unit test before commiting the code. To run unit te
 
 To access the server:
 ```
-docker-compose exec -it airflow-apiserver bash
+docker compose exec -it airflow-apiserver bash
 ```
 and run the following command:
 

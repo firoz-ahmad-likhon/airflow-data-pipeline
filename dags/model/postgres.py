@@ -16,7 +16,7 @@ class PostgresSQL:
 
     def _get_conn_config(self) -> dict[str, Any]:
         """Get DB config from environment variables."""
-        dsn = os.getenv("POSTGRES_CONNECTION_STRING")
+        dsn = os.getenv("POSTGRES_CONNECTION_STRING", None)
         if dsn:
             return {"dsn": dsn}
         return {
