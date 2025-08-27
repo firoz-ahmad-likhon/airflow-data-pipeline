@@ -133,7 +133,6 @@ def psr_sync() -> None:
     def sync(data: list[tuple[str, str, float]]) -> bool:
         """Perform the bulk insert of the JSON data into the destination table."""
         try:
-            Destination().table_maintenance()  # Create the destination table if it doesn't exist.
             Destination().bulk_sync(data)
             logger.info("Data sync successful")
             return True
