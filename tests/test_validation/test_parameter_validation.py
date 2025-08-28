@@ -1,4 +1,4 @@
-from validation.parameter_validation import ParameterValidator
+from dags.validation.parameter_validation import ParameterValidator
 import pytest
 
 

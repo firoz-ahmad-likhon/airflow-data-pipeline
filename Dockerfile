@@ -20,7 +20,5 @@ RUN pip install \
     pytest-mock==3.14.0 \
     types-requests==2.32.0.20240914
 
-COPY pytest.ini ./
-
 EXPOSE 8080
 CMD ["airflow", "webserver"]

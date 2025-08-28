@@ -4,8 +4,8 @@ import great_expectations as gx
 import pendulum
 from great_expectations import RunIdentifier
 import pandas as pd
-from validation.validator import Validator
-from quality.gx_init import GXInitiator
+from dags.validation.validator import Validator
+from dags.quality.gx_init import GXInitiator
 import logging
 
 

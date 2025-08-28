@@ -1,7 +1,7 @@
 from typing import cast
 import re
 import pendulum
-from .validator import Validator
+from dags.validation.validator import Validator
 
 
 class ParameterValidator(Validator):

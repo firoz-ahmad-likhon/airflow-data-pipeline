@@ -1,7 +1,7 @@
 import pytest
 from typing import Any
 from collections.abc import Generator
-from model.destination import DestinationPostgreSQL
+from dags.model.destination import DestinationPostgreSQL
 
 
 @pytest.fixture(scope="session")

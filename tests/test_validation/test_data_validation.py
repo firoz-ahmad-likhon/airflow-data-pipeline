@@ -1,5 +1,5 @@
 from typing import Any
-from validation.data_validation import DataValidator
+from dags.validation.data_validation import DataValidator
 
 
 class TestDataValidator:

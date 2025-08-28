@@ -1,4 +1,4 @@
-from model.destination import DestinationPostgreSQL
+from dags.model.destination import DestinationPostgreSQL
 
 
 class TestDestination:
