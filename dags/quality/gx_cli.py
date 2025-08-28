@@ -1,5 +1,5 @@
 import argparse
-from gx_init import GXInitiator
+from dags.quality.gx_init import GXInitiator
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

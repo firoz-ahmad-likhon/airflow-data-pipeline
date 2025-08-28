@@ -1,4 +1,4 @@
-from .integrity_tester import IntegrityTester
+from tests.test_dags.integrity_tester import IntegrityTester
 from airflow.models import DagBag
 
 

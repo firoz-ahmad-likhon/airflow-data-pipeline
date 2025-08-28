@@ -1,7 +1,7 @@
 from typing import Any
 from datetime import datetime, timezone
 import pendulum
-from helper.api_helper import APIHelper
+from dags.helper.api_helper import APIHelper
 
 
 class TestAPIHelper:

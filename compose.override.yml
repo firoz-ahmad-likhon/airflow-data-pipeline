@@ -3,6 +3,7 @@
 x-airflow-volumes: &airflow-volumes
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/tests:/opt/airflow/tests
+    - ${AIRFLOW_PROJ_DIR:-.}/pytest.ini:/opt/airflow/pytest.ini
 
 services:
   airflow-apiserver:

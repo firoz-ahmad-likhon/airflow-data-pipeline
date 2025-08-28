@@ -1,4 +1,4 @@
-from .postgres import PostgresSQL
+from dags.model.postgres import PostgresSQL
 
 
 class DestinationPostgreSQL(PostgresSQL):

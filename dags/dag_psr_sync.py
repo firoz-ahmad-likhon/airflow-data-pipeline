@@ -8,11 +8,11 @@ from airflow.sdk import Label
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.utils.types import DagRunType
 from airflow.models import DagRun
-from model.destination import DestinationPostgreSQL as Destination
-from model.source import SourceAPI as Source
-from helper.api_helper import APIHelper as Helper
-from validation.parameter_validation import ParameterValidator as Validator
-from validation.data_validation import DataValidator
+from dags.model.destination import DestinationPostgreSQL as Destination
+from dags.model.source import SourceAPI as Source
+from dags.helper.api_helper import APIHelper as Helper
+from dags.validation.parameter_validation import ParameterValidator as Validator
+from dags.validation.data_validation import DataValidator
 
 # Use the Airflow task logger
 logger = logging.getLogger("dag_psr_sync")
@@ -93,7 +93,7 @@ def psr_sync() -> None:
                 if not data["data"]:
                     raise AirflowException("Data is empty")
                 logger.info("Data fetch successful")
-                return cast(dict[str, Any], data)
+                return data
             except Exception as e:
                 raise AirflowException(f"Data fetch failed: {e}") from e
 
@@ -112,7 +112,7 @@ def psr_sync() -> None:
         @task(task_display_name="Transformer")
         def transform(data: dict[str, Any]) -> list[tuple[str, str, float]]:
             """Transform the JSON data into a format suitable for bulk insert into the destination table."""
-            return cast(list[tuple[str, str, float]], Helper.transform(data))
+            return Helper.transform(data)
 
         fetched_data = fetch(parameters)
         validated_data = validate(cast(dict[str, Any], fetched_data))
