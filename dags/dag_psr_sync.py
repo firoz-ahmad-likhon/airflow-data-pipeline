@@ -8,11 +8,13 @@ from airflow.sdk import Label
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.utils.types import DagRunType
 from airflow.models import DagRun
-from dags.model.destination import DestinationPostgreSQL as Destination
+from dags.database.connection import DBConnection
+from dags.database.models import PSR
 from dags.model.source import SourceAPI as Source
 from dags.helper.api_helper import APIHelper as Helper
 from dags.validation.parameter_validation import ParameterValidator as Validator
 from dags.validation.data_validation import DataValidator
+from sqlalchemy.dialects.postgresql import insert
 
 # Use the Airflow task logger
 logger = logging.getLogger("dag_psr_sync")
@@ -133,7 +135,25 @@ def psr_sync() -> None:
     def sync(data: list[tuple[str, str, float]]) -> bool:
         """Perform the bulk insert of the JSON data into the destination table."""
         try:
-            Destination().bulk_sync(data)
+            con = DBConnection()
+            with con.get_session() as db:
+                records = [
+                    {
+                        "curve_name": row[0],
+                        "curve_date": row[1],
+                        "value": row[2],
+                    }
+                    for row in data
+                ]
+                # Build UPSERT statement for postgres
+                stmt = insert(PSR).values(records)
+                stmt = stmt.on_conflict_do_update(
+                    index_elements=["curve_name", "curve_date"],
+                    set_={"value": stmt.excluded.value},  # update the value if conflict
+                )
+
+                db.execute(stmt)
+                db.commit()
             logger.info("Data sync successful")
             return True
         except Exception as e:
