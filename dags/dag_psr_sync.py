@@ -10,10 +10,10 @@ from airflow.utils.types import DagRunType
 from airflow.models import DagRun
 from dags.database.connection import DBConnection
 from dags.database.models import PSR
-from dags.model.source import SourceAPI as Source
-from dags.helper.api_helper import APIHelper as Helper
-from dags.validation.parameter_validation import ParameterValidator as Validator
-from dags.validation.data_validation import DataValidator
+from dags.services.source import SourceAPI as Source
+from dags.utils.api_helper import APIHelper as Helper
+from dags.validations.parameter_validation import ParameterValidator as Validator
+from dags.validations.data_validation import DataValidator
 from sqlalchemy.dialects.postgresql import insert
 
 # Use the Airflow task logger
@@ -106,10 +106,10 @@ def psr_sync() -> None:
             result = q.validate()
 
             if result:
-                logger.info("Data validation successful")
+                logger.info("Data validations successful")
                 return data
             else:
-                raise AirflowException("Data validation failed")
+                raise AirflowException("Data validations failed")
 
         @task(task_display_name="Transformer")
         def transform(data: dict[str, Any]) -> list[tuple[str, str, float]]:

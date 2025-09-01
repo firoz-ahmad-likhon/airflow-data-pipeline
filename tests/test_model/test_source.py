@@ -1,5 +1,5 @@
 import pendulum
-from dags.model.source import SourceAPI
+from dags.services.source import SourceAPI
 
 
 class TestSourceAPI:

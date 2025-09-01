@@ -1,5 +1,5 @@
 import pytest
-from dags.validation.parameter_validation import ParameterValidator
+from dags.validations.parameter_validation import ParameterValidator
 
 
 @pytest.fixture(scope="class")

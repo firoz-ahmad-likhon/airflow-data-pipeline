@@ -2,19 +2,19 @@ import os
 import shutil
 from pathlib import Path
 import great_expectations as gx
-from dags.helper.db_helper import DBHelper
+from dags.utils.db_helper import DBHelper
 
 
 class GXInitiator:
-    """Initialize the Great Expectations context and add data assets, suites, validation definitions and checkpoints.
+    """Initialize the Great Expectations context and add data assets, suites, validations definitions and checkpoints.
 
-    This class creates two checkpoints to validate the transactions data for statistical, completeness metrics of data quality. The checkpoints consist of four suites and validation definitions:
+    This class creates two checkpoints to validate the transactions data for statistical, completeness metrics of data quality. The checkpoints consist of four suites and validations definitions:
     - distribution: This suite validates the distribution nature.
     - missingness: This suite validates the completeness of the data.
     - schema: This suite validates the schema definition of the data.
     - volume: This suite validates the quantity of the data.
 
-    The checkpoints also have an action to generate data docs for the transactions data. It stores the validation results in a database store as well.
+    The checkpoints also have an action to generate data docs for the transactions data. It stores the validations results in a database store as well.
 
 
     Once anything changes regarding context, it must be recreated using `python init.py --mode recreate`.
@@ -57,7 +57,7 @@ class GXInitiator:
             cls.context = gx.get_context(mode="file", project_root_dir=cls.PROJECT_DIR)
             cls.context.enable_analytics(enable=False)
             cls.add_data_docs_site()
-            cls.add_validation_results_store_backend()  # Comment out if you don't want to store validation results in a database
+            cls.add_validation_results_store_backend()  # Comment out if you don't want to store validations results in a database
             cls.add_data_assets()
             cls.add_suites_and_validation_definitions()
             cls.add_checkpoint()
@@ -81,7 +81,7 @@ class GXInitiator:
 
     @classmethod
     def add_validation_results_store_backend(cls) -> None:
-        """Configure a database store for storing validation results."""
+        """Configure a database store for storing validations results."""
         cls.context.add_store(
             "validation_results_store",
             {
@@ -110,7 +110,7 @@ class GXInitiator:
 
     @classmethod
     def add_suites_and_validation_definitions(cls) -> None:
-        """Add suites and validation definitions to the data context."""
+        """Add suites and validations definitions to the data context."""
         cls.distribution_suite()
         cls.missingness_suite()
         cls.schema_suite()

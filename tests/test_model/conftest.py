@@ -1,6 +1,6 @@
 import pytest
 from typing import Any
-from dags.model.source import SourceAPI
+from dags.services.source import SourceAPI
 
 
 @pytest.fixture
