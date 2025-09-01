@@ -1,5 +1,5 @@
 import pytest
-from dags.helper.db_helper import DBHelper
+from dags.utils.db_helper import DBHelper
 
 
 class TestDBHelper:

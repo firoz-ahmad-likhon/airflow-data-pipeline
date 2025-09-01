@@ -27,7 +27,7 @@ class TestIntegrationGX:
         self,
         context: AbstractDataContext,
     ) -> None:
-        """Assert that the validation results store is configured."""
+        """Assert that the validations results store is configured."""
         any(
             store["name"] == "validation_results_store"
             for store in context.list_stores()
@@ -70,13 +70,13 @@ class TestIntegrationGX:
         context: AbstractDataContext,
         dimensions: list[str],
     ) -> None:
-        """Assert that all validation definitions are added to the context."""
+        """Assert that all validations definitions are added to the context."""
         gx_validation_def = set(
             validation.name for validation in context.validation_definitions.all()
         )
         assert gx_validation_def == set(
             dimensions,
-        ), "All validation definitions should be added to the context"
+        ), "All validations definitions should be added to the context"
 
     def test_checkpoints(
         self,

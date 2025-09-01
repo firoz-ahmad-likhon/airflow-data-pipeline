@@ -6,5 +6,5 @@ class Validator(ABC):
 
     @abstractmethod
     def validate(self) -> bool:
-        """To identify if the validation passed."""
+        """To identify if the validations passed."""
         pass

@@ -1,7 +1,7 @@
 from typing import cast
 import re
 import pendulum
-from dags.validation.validator import Validator
+from dags.validations.validator import Validator
 
 
 class ParameterValidator(Validator):
@@ -87,7 +87,7 @@ class ParameterValidator(Validator):
         return True
 
     def validate(self) -> bool:
-        """Aggregate validation steps and return True or False."""
+        """Aggregate validations steps and return True or False."""
         if len(self.errors) > 0:  # As string to date conversion can raise error first.
             return False
         # if not self.validate_minutes():

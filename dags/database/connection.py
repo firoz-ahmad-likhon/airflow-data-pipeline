@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from dags.helper.db_helper import DBHelper
+from dags.utils.db_helper import DBHelper
 
 
 class DBConnection:

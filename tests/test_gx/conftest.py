@@ -43,7 +43,7 @@ def context(gxi: GXInitiator) -> AbstractDataContext:
 
 @pytest.fixture(scope="session")
 def dimensions() -> list[str]:
-    """List of dimensions for suites, validation definitions.
+    """List of dimensions for suites, validations definitions.
 
     returns: A list of Great Expectations suites.
     """
