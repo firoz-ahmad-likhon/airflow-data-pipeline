@@ -55,16 +55,26 @@ The test contains the following:
 2. Unit test on the Dag tasks.
 3. Unit test on every relevant function.
 
-Basic test:
+DAG Loader Test:
 ```
 python dags/dag_psr_sync.py
 ```
+```
+time python dags/dag_psr_sync.py
+```
+Dag Run test:
+```
+airflow dags test psr_sync
+```
+params: `--conf '{"date_from":"2025-01-01T00:00:00Z","date_to":"2025-01-01T00:30:00Z"}'`
 
 Task test:
 ```
-airflow tasks test  psr_sync parameterize
+airflow tasks test psr_sync parameterize
 ```
-**Note:** The `parameterize` is the task name in the dag. Switch to other task name it needed.
+params: `--task-params '{"date_from":"2025-01-01T00:00:00Z","date_to":"2025-01-01T00:30:00Z"}'`
+
+**Note:** Available tasks: `airflow tasks list psr_sync`. **Task test does not fit with existing dags**.
 
 ## Type Checking and Linting
 This repo uses `pre-commit` hooks to check type and linting before committing the code.

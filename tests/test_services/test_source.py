@@ -5,13 +5,13 @@ from dags.services.source import SourceAPI
 class TestSourceAPI:
     """Test class for SourceAPI."""
 
-    def test_url_friendly_datetime(self, api_mocker: SourceAPI) -> None:
+    def test_url_friendly_datetime(self) -> None:
         """Test that datetime is correctly formatted for the API URL.
 
         :param api_mocker: Mocked SourceAPI object from fixture.
         """
         assert (
-            api_mocker.url_friendly_datetime(pendulum.datetime(2024, 10, 16, 14, 30))
+            SourceAPI().url_friendly_datetime(pendulum.datetime(2024, 10, 16, 14, 30))
             == "2024-10-16%2014%3A30"
         )
 

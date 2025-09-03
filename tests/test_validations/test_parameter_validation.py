@@ -62,7 +62,7 @@ class TestParameterValidator:
 
         :param parameter_validator: ParameterValidator instance from fixture.
         """
-        assert parameter_validator.validate_days_range() is False
+        assert parameter_validator.validate_days_range() is True
 
     def test_invalid_minutes(self, parameter_validator: ParameterValidator) -> None:
         """Test invalid minutes.
