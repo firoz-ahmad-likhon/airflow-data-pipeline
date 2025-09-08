@@ -1,7 +1,5 @@
 import pytest
-from pytest_mock import MockerFixture
 from typing import Any
-from dags.services.source import SourceAPI
 
 
 @pytest.fixture(scope="session")
@@ -57,19 +55,3 @@ def mock_params() -> dict[str, Any]:
         "date_from": "2024-10-15 00:00",
         "date_to": "2024-10-16 00:30",
     }
-
-
-@pytest.fixture
-def api_mocker(
-    mocker: MockerFixture,
-    mock_data: dict[str, list[dict[str, Any]]],
-) -> SourceAPI:
-    """Patch requests.get with mock data and return a SourceAPI instance."""
-    mock_resp = mocker.Mock()
-    mock_resp.status_code = 200
-    mock_resp.json.return_value = mock_data
-
-    # Patch requests.get wherever SourceAPI calls it
-    mocker.patch("requests.get", return_value=mock_resp)
-
-    return SourceAPI()
