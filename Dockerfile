@@ -15,10 +15,7 @@ CMD ["airflow", "webserver"]
 FROM base AS dev
 
 # Install dev-specific Python tools
-RUN pip install \
-    pytest==8.3.3 \
-    pytest-mock==3.14.0 \
-    types-requests==2.32.0.20240914
+RUN pip install pytest==8.4.2
 
 EXPOSE 8080
 CMD ["airflow", "webserver"]
