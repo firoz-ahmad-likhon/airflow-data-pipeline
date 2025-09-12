@@ -13,7 +13,6 @@ from dags.database.models import PSR
 from dags.services.source import SourceAPI as Source
 from dags.utils.api_helper import APIHelper as Helper
 from dags.validations.parameter_validation import ParameterValidator as Validator
-from dags.validations.data_validation import DataValidator
 from sqlalchemy.dialects.postgresql import insert
 
 # Use the Airflow task logger
@@ -99,32 +98,17 @@ def psr_sync() -> None:
             except Exception as e:
                 raise AirflowException(f"Data fetch failed: {e}") from e
 
-        @task(task_display_name="Validator")
-        def validate(data: dict[str, Any]) -> dict[str, Any]:
-            """Validate the data before transformation."""
-            q = DataValidator(data["data"])
-            result = q.validate()
-
-            if result:
-                logger.info("Data validations successful")
-                return data
-            else:
-                raise AirflowException("Data validations failed")
-
         @task(task_display_name="Transformer")
         def transform(data: dict[str, Any]) -> list[tuple[str, str, float]]:
             """Transform the JSON data into a format suitable for bulk insert into the destination table."""
             return Helper.transform(data)
 
         fetched_data = fetch(parameters)
-        validated_data = validate(cast(dict[str, Any], fetched_data))
-        transformed_data = transform(cast(dict[str, Any], validated_data))
+        transformed_data = transform(cast(dict[str, Any], fetched_data))
 
         (
             fetched_data
             >> Label("Fetched data from API")
-            >> validated_data
-            >> Label("Validated data")
             >> transformed_data
             >> Label("Transformed data")
         )

@@ -1,4 +1,4 @@
-from tests.test_dags.integrity_tester import IntegrityTester
+from tests.interface.integrity_tester import IntegrityTester
 from airflow.models import DagBag
 
 
@@ -20,7 +20,7 @@ class TestPSRSyncDAG(IntegrityTester):
 
     def test_task_count(self, dag_psr_sync: DagBag) -> None:
         """Test the number of tasks in the DAG."""
-        expected_task_count = 6
+        expected_task_count = 5
         assert (
             len(dag_psr_sync.tasks) == expected_task_count
         ), f"Expected 5 tasks, but got {len(dag_psr_sync.tasks)}"
@@ -30,8 +30,7 @@ class TestPSRSyncDAG(IntegrityTester):
         # Define expected upstream and downstream dependencies
         task_deps = {
             "Processor.fetch": ["parameterize"],
-            "Processor.validate": ["Processor.fetch"],
-            "Processor.transform": ["Processor.validate"],
+            "Processor.transform": ["Processor.fetch"],
             "sync": ["Processor.transform"],
         }
 

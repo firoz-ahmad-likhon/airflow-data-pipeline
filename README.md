@@ -3,10 +3,12 @@
 This repository contains an Airflow-based data pipeline that:
 
 - Ingests data from [API](https://bmrs.elexon.co.uk/actual-or-estimated-wind-and-solar-power-generation).
-- Validates data quality using [Great Expectations](https://greatexpectations.io/).
-- Stores the validated data in a Postgres database.
+- Stores data in a Postgres database.
 
 The pipeline is modular, reliable, and designed for extensibility in real-world data engineering workflows.
+
+## Graph
+![DAG](psr_sync-graph.png)
 
 ## Prerequisites
 - Docker installed.
@@ -30,7 +32,7 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
    ```
 
 ## Precautions
-Remove `config` and `dags/quality/gx` folders if any error occurs during the setup. To clean up the log remove `logs` folder.
+Remove `config` folders if any error occurs during the setup. To clean up the log remove `logs` folder.
 
 ## Dag run
 - When you trigger the dag manually, the input date time will UTC time.
@@ -98,18 +100,6 @@ pip install pre-commit
 Enable:
 ```
 pre-commit install
-```
-
-## Great Expectations
-Great Expectations will run automatically.
-
-To init the expectations:
-```
-python dags/quality/gx_cli.py --mode init
-```
-To re-create the expectations:
-```
-python dags/quality/gx_cli.py --mode recreate
 ```
 
 ## License
