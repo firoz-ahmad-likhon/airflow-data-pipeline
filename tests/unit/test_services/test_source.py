@@ -26,7 +26,7 @@ class TestSourceAPI:
         """
 
         class MockResponse:
-            """The best approach to mocking is to mock the object where it is used, not where it is defined."""
+            """Mock response."""
 
             status_code = HTTPStatus.OK
 
@@ -40,7 +40,7 @@ class TestSourceAPI:
         from_date = pendulum.datetime(2024, 10, 10)
         to_date = pendulum.datetime(2024, 10, 12)
 
-        # Monkeypatch the invoke method to return the mocked response
+        # Monkeypatch the get method to return the mocked response
         monkeypatch.setattr("dags.services.source.requests.get", mock_get)
 
         # Call the method that fetches the JSON
