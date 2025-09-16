@@ -1,3 +1,4 @@
+import http
 import pendulum
 import requests  # type: ignore
 from typing import Any, cast
@@ -11,7 +12,6 @@ class SourceAPI:
         "https://data.elexon.co.uk/bmrs/api/v1/generation/actual/per-type/"
         "wind-and-solar?from={from_date}&to={to_date}&format=json"
     )
-    STATUS_OK = 200  # HTTP status code for successful request
 
     def __init__(self) -> None:
         """Initialize class."""
@@ -43,7 +43,7 @@ class SourceAPI:
 
         response = requests.get(url)
 
-        if response.status_code != self.STATUS_OK:
+        if response.status_code != http.HTTPStatus.OK:
             raise Exception(f"Failed to fetch data: {response.status_code}")
 
         return cast(dict[str, Any], response.json())
