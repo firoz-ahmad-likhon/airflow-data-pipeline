@@ -1,4 +1,4 @@
-name: Docker Hub
+name: Docker Hub Publication
 
 on:
   release:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-push-docker:
-    name: Docker Hub
+    name: Docker Hub Publication
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
