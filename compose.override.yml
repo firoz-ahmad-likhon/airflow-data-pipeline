@@ -1,4 +1,9 @@
-# Attach volumes for dev environment
+x-airflow-common-dev: &airflow-common-dev
+  image: ""
+  build:
+    context: .
+    dockerfile: Dockerfile
+    target: ${ENV:-dev}
 
 x-airflow-volumes: &airflow-volumes
   volumes:
@@ -7,7 +12,25 @@ x-airflow-volumes: &airflow-volumes
 
 services:
   airflow-apiserver:
-    <<: *airflow-volumes
+    <<: [*airflow-common-dev, *airflow-volumes]
+
+  airflow-scheduler:
+    <<: *airflow-common-dev
+
+  airflow-dag-processor:
+    <<: *airflow-common-dev
+
+  airflow-worker:
+    <<: *airflow-common-dev
+
+  airflow-triggerer:
+    <<: *airflow-common-dev
+
+  airflow-init:
+    <<: *airflow-common-dev
 
   airflow-cli:
-    <<: *airflow-volumes
+    <<: [*airflow-common-dev, *airflow-volumes]
+
+  flower:
+    <<: *airflow-common-dev

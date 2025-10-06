@@ -99,7 +99,7 @@ pre-commit install
 3. Set `ENV=prod` in `.env`
 4. Up the airflow docker containers:
    ```
-   docker compose -f compose.yml up -d --build
+   docker compose -f compose.yml up -d
    ```
 
 ## Docker Image
