@@ -17,9 +17,14 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
 1. Clone the repo.
 2. Copy the `.env.example` to `.env` and update the values as per your environment.
 3. Set `ENV=dev` in `.env`
-4. Up the airflow docker containers:
+4. Set `IMAGE_TAG` in `.env` (for example, `IMAGE_TAG=v1.0.0`).
+5. Pull the image:
    ```
-   docker compose up -d --build
+   docker compose pull
+   ```
+6. Up the airflow docker containers:
+   ```
+   docker compose up -d
    ```
 
 ## Precautions
@@ -97,19 +102,15 @@ pre-commit install
 1. Clone the repo.
 2. Copy the `.env.example` to `.env` and update the values as per your environment.
 3. Set `ENV=prod` in `.env`
-4. Up the airflow docker containers:
+4. Set `IMAGE_TAG` in `.env` (for example, `IMAGE_TAG=v1.0.0`).
+5. Pull the image:
+   ```
+   docker compose pull
+   ```
+6. Up the airflow docker containers:
    ```
    docker compose -f compose.yml up -d
    ```
-
-## Docker Image
-The production-ready Docker image is automatically built and published to [Docker Hub](https://hub.docker.com/r/likh/airflow-data-pipeline) on every new GitHub Release.
-
-Pulling the Image:
-```
-docker pull likh/airflow-data-pipeline:latest
-```
-**Recommended to pull a specific tag (e.g. v1.0.0).**
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
