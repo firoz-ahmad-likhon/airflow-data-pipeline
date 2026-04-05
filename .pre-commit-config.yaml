@@ -21,18 +21,13 @@ repos:
     -   id: check-byte-order-marker
     -   id: check-ast
 
-    # Black
--   repo: https://github.com/psf/black
-    rev: 25.1.0
-    hooks:
-    -   id: black
-
     # Ruff
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.10
     hooks:
+    -   id: ruff-format
     -   id: ruff
-        args: ["--config", "./.ruff.toml"]
+        args: ["--fix", "--config", "./.ruff.toml"]
 
     # Mypy
 -   repo: https://github.com/pre-commit/mirrors-mypy
