@@ -4,7 +4,7 @@ from typing import Any
 import pendulum
 import pytest
 
-from dags.services.source import SourceAPI
+from pipelines.services.source import SourceAPI
 
 
 class TestSourceAPI:
@@ -40,7 +40,7 @@ class TestSourceAPI:
         to_date = pendulum.datetime(2024, 10, 12)
 
         # Monkeypatch the get method to return the mocked response
-        monkeypatch.setattr("dags.services.source.requests.get", mock_get)
+        monkeypatch.setattr("pipelines.services.source.requests.get", mock_get)
 
         # Call the method that fetches the JSON
         result = SourceAPI().fetch_json(from_date, to_date)

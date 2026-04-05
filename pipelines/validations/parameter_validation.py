@@ -1,7 +1,9 @@
-from typing import cast
 import re
+from typing import cast
+
 import pendulum
-from dags.validations.validator import Validator
+
+from pipelines.validations.validator import Validator
 
 
 class ParameterValidator(Validator):

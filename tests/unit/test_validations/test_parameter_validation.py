@@ -1,5 +1,6 @@
-from dags.validations.parameter_validation import ParameterValidator
 import pytest
+
+from pipelines.validations.parameter_validation import ParameterValidator
 
 
 class TestParameterValidator:

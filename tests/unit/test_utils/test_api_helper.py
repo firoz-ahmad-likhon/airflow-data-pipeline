@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 import pendulum
 
-from dags.utils.api_helper import APIHelper
+from pipelines.utils.api_helper import APIHelper
 
 
 class TestAPIHelper:

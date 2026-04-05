@@ -1,5 +1,6 @@
 import pytest
-from dags.utils.db_helper import DBHelper
+
+from pipelines.utils.db_helper import DBHelper
 
 
 class TestDBHelper:

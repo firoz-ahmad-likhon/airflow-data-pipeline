@@ -8,11 +8,11 @@ from airflow.sdk import Param, dag, task
 from airflow.utils.types import DagRunType
 from sqlalchemy import insert
 
-from dags.database.connection import DBConnection
-from dags.database.models import WindAndSolarPowerGeneration
-from dags.services.source import SourceAPI as Source
-from dags.utils.api_helper import APIHelper as Helper
-from dags.validations.parameter_validation import ParameterValidator as Validator
+from pipelines.database.connection import DBConnection
+from pipelines.database.models import WindAndSolarPowerGeneration
+from pipelines.services.source import SourceAPI as Source
+from pipelines.utils.api_helper import APIHelper as Helper
+from pipelines.validations.parameter_validation import ParameterValidator as Validator
 
 # Use the Airflow task logger
 logger = logging.getLogger("dag_wind_and_solar_power_generation")
