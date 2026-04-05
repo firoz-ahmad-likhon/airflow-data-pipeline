@@ -1,7 +1,9 @@
 from http import HTTPStatus
 from typing import Any
-import pytest
+
 import pendulum
+import pytest
+
 from dags.services.source import SourceAPI
 
 
@@ -10,10 +12,7 @@ class TestSourceAPI:
 
     def test_url_friendly_datetime(self) -> None:
         """Test that datetime is correctly formatted for the API URL."""
-        assert (
-            SourceAPI().url_friendly_datetime(pendulum.datetime(2024, 10, 16, 14, 30))
-            == "2024-10-16%2014%3A30"
-        )
+        assert SourceAPI().url_friendly_datetime(pendulum.datetime(2024, 10, 16, 14, 30)) == "2024-10-16%2014%3A30"
 
     def test_fetch_json(
         self,
@@ -47,5 +46,8 @@ class TestSourceAPI:
         result = SourceAPI().fetch_json(from_date, to_date)
 
         assert isinstance(result, dict)
-        assert result["data"][0]["psrType"] == "Wind Onshore"
-        assert result["data"][1]["psrType"] == "Wind Offshore"
+        assert result["window_from_utc"] == from_date.to_iso8601_string()
+        assert result["window_to_utc"] == to_date.to_iso8601_string()
+        assert result["http_status"] == HTTPStatus.OK
+        assert "wind-and-solar" in result["request_url"]
+        assert '"psrType": "Wind Onshore"' in result["payload_json"]

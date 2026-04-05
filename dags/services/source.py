@@ -1,17 +1,16 @@
 import http
+import json
+from typing import Any
+from urllib.parse import quote
+
 import pendulum
 import requests  # type: ignore
-from typing import Any, cast
-from urllib.parse import quote
 
 
 class SourceAPI:
     """The class is intended to read  the data from API for shipping to warehouse destination."""
 
-    API_URL = (
-        "https://data.elexon.co.uk/bmrs/api/v1/generation/actual/per-type/"
-        "wind-and-solar?from={from_date}&to={to_date}&format=json"
-    )
+    API_URL = "https://data.elexon.co.uk/bmrs/api/v1/generation/actual/per-type/wind-and-solar?from={from_date}&to={to_date}&format=json"
 
     def __init__(self) -> None:
         """Initialize class."""
@@ -42,8 +41,17 @@ class SourceAPI:
         )
 
         response = requests.get(url)
+        payload = response.json()
 
         if response.status_code != http.HTTPStatus.OK:
             raise Exception(f"Failed to fetch data: {response.status_code}")
 
-        return cast(dict[str, Any], response.json())
+        return {
+            "ingestion_ts": pendulum.now(tz="UTC").to_iso8601_string(),
+            "window_from_utc": from_date.to_iso8601_string(),
+            "window_to_utc": to_date.to_iso8601_string(),
+            "request_url": url,
+            "http_status": response.status_code,
+            "payload_json": json.dumps(payload),
+            "load_date": pendulum.now(tz="UTC").to_date_string(),
+        }
