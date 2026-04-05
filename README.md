@@ -7,9 +7,6 @@ This repository contains an Airflow-based data pipeline that:
 
 The pipeline is modular, reliable, and designed for extensibility in real-world data engineering workflows.
 
-## Graph
-![DAG](psr_sync-graph.png)
-
 ## Prerequisites
 - Docker installed.
 
@@ -17,18 +14,10 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
 1. Clone the repo.
 2. Copy the `.env.example` to `.env` and update the values as per your environment.
 3. Set `ENV=dev` in `.env`
-4. Set `IMAGE_TAG` in `.env` (for example, `IMAGE_TAG=v1.0.0`).
-5. Pull the image:
+4. Up the airflow docker containers:
    ```
-   docker compose pull
+   docker compose up -d --build
    ```
-6. Up the airflow docker containers:
-   ```
-   docker compose up -d
-   ```
-
-## Precautions
-Remove `config` folders if any error occurs during the setup. To clean up the log remove `logs` folder.
 
 ## Dag run
 - When you trigger the dag manually, the input date time will UTC time.
@@ -40,12 +29,7 @@ It is recommended to perform unit test before commiting the code. To run unit te
 
 To access the server:
 ```
-docker compose exec -it airflow-apiserver bash
-```
-and run the following command:
-
-```
-pytest
+docker compose exec airflow-apiserver pytest
 ```
 
 The test contains the following:
@@ -55,24 +39,26 @@ The test contains the following:
 
 DAG Loader Test:
 ```
-python dags/dag_psr_sync.py
+python dags/wind_and_solar_power_generation.py
 ```
+
 ```
-time python dags/dag_psr_sync.py
+time python dags/wind_and_solar_power_generation.py
 ```
+
 Dag Run test:
 ```
-airflow dags test psr_sync
+airflow dags test wind_and_solar_power_generation
 ```
 params: `--conf '{"date_from":"2025-01-01T00:00:00Z","date_to":"2025-01-01T00:30:00Z"}'`
 
 Task test:
 ```
-airflow tasks test psr_sync parameterize
+airflow tasks test wind_and_solar_power_generation parameterize
 ```
 params: `--task-params '{"date_from":"2025-01-01T00:00:00Z","date_to":"2025-01-01T00:30:00Z"}'`
 
-**Note:** Available tasks: `airflow tasks list psr_sync`. **Task test does not fit with existing dags**.
+**Note:** Available tasks: `airflow tasks list wind_and_solar_power_generation`. **Task test does not fit with existing dags**.
 
 ## Type Checking and Linting
 This repo uses `pre-commit` hooks to check type and linting before committing the code.
@@ -105,7 +91,7 @@ pre-commit install
 4. Set `IMAGE_TAG` in `.env` (for example, `IMAGE_TAG=v1.0.0`).
 5. Pull the image:
    ```
-   docker compose pull
+   docker compose -f compose.yml pull
    ```
 6. Up the airflow docker containers:
    ```

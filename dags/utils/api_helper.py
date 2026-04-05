@@ -1,26 +1,10 @@
-from typing import Any
-import pendulum
 from datetime import datetime
+
+import pendulum
 
 
 class APIHelper:
     """Helper class to prepare acquisition of data from the API and handle the API data."""
-
-    @staticmethod
-    def transform(data: dict[str, Any]) -> list[tuple[str, str, float]]:
-        """Filter and transform data to extract required fields.
-
-        :param data: data acquired from the API
-        :return: list of tuples containing psrType, startTime and quantity
-        """
-        return [
-            (
-                "bmreports, " + item["psrType"] + ", min30",
-                item["startTime"],
-                item["quantity"],
-            )
-            for item in data["data"]
-        ]
 
     @staticmethod
     def date_param(dt: datetime) -> pendulum.DateTime:

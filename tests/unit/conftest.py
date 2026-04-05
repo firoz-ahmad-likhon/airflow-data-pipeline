@@ -1,5 +1,6 @@
-import pytest
 from typing import Any
+
+import pytest
 
 
 @pytest.fixture(scope="session")
@@ -36,16 +37,6 @@ def mock_data() -> dict[str, list[dict[str, Any]]]:
             },
         ],
     }
-
-
-@pytest.fixture(scope="session")
-def mock_transformed_data() -> list[tuple[str, str, float]]:
-    """Fixture providing mock transformed data."""
-    return [
-        ("bmreports, Wind Onshore, min30", "2023-07-21T04:30:00Z", 640.283),
-        ("bmreports, Wind Offshore, min30", "2023-07-21T04:30:00Z", 77.014),
-        ("bmreports, Solar, min30", "2023-07-21T04:30:00Z", 89.0),
-    ]
 
 
 @pytest.fixture

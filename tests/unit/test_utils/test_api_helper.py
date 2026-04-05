@@ -1,22 +1,12 @@
-from typing import Any
 from datetime import datetime, timezone
+
 import pendulum
+
 from dags.utils.api_helper import APIHelper
 
 
 class TestAPIHelper:
     """Test class for APIHelper."""
-
-    def test_transform(
-        self,
-        mock_data: dict[str, list[dict[str, Any]]],
-        mock_transformed_data: list[tuple[str, str, float]],
-    ) -> None:
-        """Test the transform method.
-
-        :param mock_data: Mock data from fixture.
-        """
-        assert APIHelper.transform(mock_data) == mock_transformed_data
 
     def test_date_param(self) -> None:
         """Test the date_param method."""
