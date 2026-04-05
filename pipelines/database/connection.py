@@ -3,36 +3,21 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from pipelines.utils.db_helper import DBHelper
 
+DATABASE_URL = DBHelper.database_url()
 
-class DBConnection:
-    """Wrapper for SQLAlchemy engine and sessions."""
+engine = create_engine(
+    DATABASE_URL,
+    future=True,
+    pool_pre_ping=True,
+)
 
-    def __init__(
-        self,
-        driver: str = "postgresql+psycopg2",
-        echo: bool = False,
-        autoflush: bool = False,
-        autocommit: bool = False,
-    ):
-        """Initialize."""
-        self.driver = driver
-        self.echo = echo
-        self.autoflush = autoflush
-        self.autocommit = autocommit
+SessionLocal = sessionmaker(
+    bind=engine,
+    autoflush=False,
+    autocommit=False,
+)
 
-        # Build URL using DBHelper
-        self.database_url = DBHelper.database_url(driver=self.driver)
 
-        # Create engine
-        self.engine = create_engine(self.database_url, echo=self.echo, future=True)
-
-        # Session factory
-        self.SessionLocal = sessionmaker(
-            bind=self.engine,
-            autoflush=self.autoflush,
-            autocommit=self.autocommit,
-        )
-
-    def get_session(self) -> Session:
-        """Get a new SQLAlchemy session (context manager style)."""
-        return self.SessionLocal()
+def get_session() -> Session:
+    """Get a new SQLAlchemy session."""
+    return SessionLocal()

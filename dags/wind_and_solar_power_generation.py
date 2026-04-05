@@ -8,7 +8,7 @@ from airflow.sdk import Param, dag, task
 from airflow.utils.types import DagRunType
 from sqlalchemy import insert
 
-from pipelines.database.connection import DBConnection
+from pipelines.database.connection import get_session
 from pipelines.database.models import WindAndSolarPowerGeneration
 from pipelines.services.source import SourceAPI as Source
 from pipelines.utils.api_helper import APIHelper as Helper
@@ -95,8 +95,7 @@ def wind_and_solar_power_generation() -> None:
     def load(data: dict[str, Any]) -> bool:
         """Load the raw record into the destination table."""
         try:
-            con = DBConnection()
-            with con.get_session() as db:
+            with get_session() as db:
                 record = {
                     "ingestion_ts": pendulum.parse(data["ingestion_ts"]),
                     "window_from_utc": pendulum.parse(data["window_from_utc"]),
