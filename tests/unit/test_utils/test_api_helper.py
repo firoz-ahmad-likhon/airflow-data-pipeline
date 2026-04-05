@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 import pendulum
 
-from dags.utils.api_helper import APIHelper
+from pipelines.utils.api_helper import APIHelper
 
 
 class TestAPIHelper:
@@ -14,8 +14,8 @@ class TestAPIHelper:
             pendulum.instance(datetime(2024, 10, 16, 10, 45, tzinfo=timezone.utc)),
         ) == pendulum.instance(datetime(2024, 10, 16, 9, 0, tzinfo=timezone.utc))
 
-    def test_floored_to_30_min(self) -> None:
+    def test_floor_to_30_min(self) -> None:
         """Test the floored_to_30_min method."""
-        assert APIHelper.floored_to_30_min(
+        assert APIHelper.floor_to_30_min(
             pendulum.instance(datetime(2024, 10, 16, 10, 45, tzinfo=timezone.utc)),
         ) == pendulum.instance(datetime(2024, 10, 16, 10, 30, tzinfo=timezone.utc))

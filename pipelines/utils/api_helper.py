@@ -16,10 +16,10 @@ class APIHelper:
         dt = pendulum.instance(dt)
 
         # API published data is 90 minutes behind
-        return APIHelper.floored_to_30_min(dt).subtract(minutes=90)
+        return APIHelper.floor_to_30_min(dt).subtract(minutes=90)
 
     @staticmethod
-    def floored_to_30_min(dt: pendulum.DateTime) -> pendulum.DateTime:
+    def floor_to_30_min(dt: pendulum.DateTime) -> pendulum.DateTime:
         """Floor the given datetime to the nearest 30 minutes.
 
         :param dt: datetime to be floored

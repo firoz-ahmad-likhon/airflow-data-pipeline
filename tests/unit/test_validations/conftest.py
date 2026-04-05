@@ -1,6 +1,8 @@
 from typing import Any
+
 import pytest
-from dags.validations.parameter_validation import ParameterValidator
+
+from pipelines.validations.parameter_validation import ParameterValidator
 
 
 @pytest.fixture

@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the code
 COPY dags/ dags/
+COPY pipelines/ pipelines/
 COPY alembic/ alembic/
 COPY alembic.ini .
 
