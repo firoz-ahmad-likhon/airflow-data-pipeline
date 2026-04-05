@@ -10,7 +10,7 @@ from sqlalchemy import insert
 
 from pipelines.database.connection import get_session
 from pipelines.database.models import WindAndSolarPowerGeneration
-from pipelines.services.source import SourceAPI as Source
+from pipelines.services.wind_solar_api import WindSolarAPI
 from pipelines.utils.api_helper import APIHelper as Helper
 from pipelines.validations.parameter_validation import ParameterValidator as Validator
 
@@ -18,7 +18,7 @@ from pipelines.validations.parameter_validation import ParameterValidator as Val
 logger = logging.getLogger("dag_wind_and_solar_power_generation")
 
 # Default date for parameter
-DEFAULT_DATE = Helper.floored_to_30_min(pendulum.now(tz="UTC")).to_iso8601_string()
+DEFAULT_DATE = Helper.floor_to_30_min(pendulum.now(tz="UTC")).to_iso8601_string()
 
 
 @dag(
@@ -63,11 +63,11 @@ def wind_and_solar_power_generation() -> None:
             validator = Validator(params["date_from"], params["date_to"])
             if not validator.validate():
                 raise AirflowException(validator.errors[-1])
-            date_from = Helper.floored_to_30_min(validator.date_from)
-            date_to = Helper.floored_to_30_min(validator.date_to)
+            date_from = Helper.floor_to_30_min(validator.date_from)
+            date_to = Helper.floor_to_30_min(validator.date_to)
 
         elif run_type == DagRunType.BACKFILL_JOB:
-            date_from = date_to = Helper.floored_to_30_min(logical_date)
+            date_from = date_to = Helper.floor_to_30_min(logical_date)
 
         else:
             # Default case: scheduled, etc.
@@ -82,7 +82,7 @@ def wind_and_solar_power_generation() -> None:
     def extract(p: dict[str, Any]) -> dict[str, Any]:
         """Fetch the JSON data from the API and push it to XCom for downstream tasks."""
         try:
-            data = Source().fetch_json(
+            data = WindSolarAPI().fetch_json(
                 p["date_from"],
                 p["date_to"],
             )

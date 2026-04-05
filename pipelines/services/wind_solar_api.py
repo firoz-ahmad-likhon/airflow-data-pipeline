@@ -7,14 +7,10 @@ import pendulum
 import requests  # type: ignore
 
 
-class SourceAPI:
-    """The class is intended to read  the data from API for shipping to warehouse destination."""
+class WindSolarAPI:
+    """Read wind and solar generation data from the external API."""
 
     API_URL = "https://data.elexon.co.uk/bmrs/api/v1/generation/actual/per-type/wind-and-solar?from={from_date}&to={to_date}&format=json"
-
-    def __init__(self) -> None:
-        """Initialize class."""
-        pass
 
     def url_friendly_datetime(self, dt: pendulum.DateTime) -> str:
         """To format datetime object for API query.
@@ -35,7 +31,7 @@ class SourceAPI:
         :param to_date:     to start date in datetime format
         :return:            JSON data as a dictionary
         """
-        url = SourceAPI.API_URL.format(
+        url = WindSolarAPI.API_URL.format(
             from_date=self.url_friendly_datetime(from_date),
             to_date=self.url_friendly_datetime(to_date),
         )
