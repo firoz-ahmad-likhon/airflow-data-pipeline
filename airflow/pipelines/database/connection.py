@@ -1,7 +1,6 @@
+from pipelines.utils.db_helper import DBHelper
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
-
-from pipelines.utils.db_helper import DBHelper
 
 DATABASE_URL = DBHelper.database_url()
 

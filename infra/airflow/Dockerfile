@@ -5,12 +5,13 @@ FROM apache/airflow:3.0.1 AS base
 WORKDIR /opt/airflow
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY airflow/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the code
-COPY dags/ dags/
-COPY pipelines/ pipelines/
+COPY airflow/dags/ dags/
+COPY airflow/pipelines/ pipelines/
+COPY airflow/plugins/ plugins/
 COPY alembic/ alembic/
 COPY alembic.ini .
 
@@ -24,7 +25,7 @@ CMD ["airflow", "webserver"]
 FROM base AS dev
 
 # Install dev-specific Python tools
-COPY requirements-dev.txt .
+COPY airflow/requirements-dev.txt .
 RUN pip install --no-cache-dir -r requirements-dev.txt
 
 EXPOSE 8080

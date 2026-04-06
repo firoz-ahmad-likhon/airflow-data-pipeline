@@ -1,14 +1,13 @@
 x-airflow-common-dev: &airflow-common-dev
-  image: ""
   build:
-    context: .
-    dockerfile: Dockerfile
+    context: ../..
+    dockerfile: infra/airflow/Dockerfile
     target: ${ENV:-dev}
 
 x-airflow-volumes: &airflow-volumes
   volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/tests:/opt/airflow/tests
-    - ${AIRFLOW_PROJ_DIR:-.}/pytest.ini:/opt/airflow/pytest.ini
+    - ${AIRFLOW_PROJ_DIR:-../..}/airflow/tests:/opt/airflow/tests
+    - ${AIRFLOW_PROJ_DIR:-../..}/pytest.ini:/opt/airflow/pytest.ini
 
 services:
   airflow-apiserver:

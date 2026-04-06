@@ -1,6 +1,7 @@
 from typing import Any
 
 import pytest
+
 from airflow.models import DagBag
 
 

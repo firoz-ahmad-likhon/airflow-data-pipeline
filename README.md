@@ -16,7 +16,7 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
 3. Set `ENV=dev` in `.env`
 4. Up the airflow docker containers:
    ```
-   docker compose up -d --build
+   docker compose --env-file .env -f infra/airflow/compose.yml -f infra/airflow/compose.override.yml up -d --build
    ```
 
 ## Dag run
@@ -27,17 +27,14 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
 ## Testing
 It is recommended to perform unit test before commiting the code. To run unit test, ensure `ENV=dev` in `.env`.
 
-To access the server:
+Pytest:
+
 ```
-docker compose exec airflow-apiserver pytest
+docker compose --env-file .env -f infra/airflow/compose.yml -f infra/airflow/compose.override.yml exec airflow-apiserver pytest
 ```
 
-The test contains the following:
-1. Integrity test on the Dag.
-2. Unit test on the Dag tasks.
-3. Unit test on every relevant function.
+DAG loader test:
 
-DAG Loader Test:
 ```
 python dags/wind_and_solar_power_generation.py
 ```
@@ -78,9 +75,6 @@ In Windows, use:
 Install:
 ```
 pip install pre-commit
-```
-Enable:
-```
 pre-commit install
 ```
 
@@ -91,11 +85,11 @@ pre-commit install
 4. Set `IMAGE_TAG` in `.env` (for example, `IMAGE_TAG=v1.0.0`).
 5. Pull the image:
    ```
-   docker compose -f compose.yml pull
+   docker compose --env-file .env -f infra/airflow/compose.yml pull
    ```
 6. Up the airflow docker containers:
    ```
-   docker compose -f compose.yml up -d
+   docker compose --env-file .env -f infra/airflow/compose.yml up -d
    ```
 
 ## License

@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 
 import pendulum
-
 from pipelines.utils.api_helper import APIHelper
 
 

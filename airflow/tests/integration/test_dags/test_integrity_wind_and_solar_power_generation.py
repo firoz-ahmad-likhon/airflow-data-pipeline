@@ -1,6 +1,6 @@
-from airflow.models import DagBag
-
 from tests.interface.integrity_tester import IntegrityTester
+
+from airflow.models import DagBag
 
 
 class TestWindAndSolarPowerGenerationDAG(IntegrityTester):

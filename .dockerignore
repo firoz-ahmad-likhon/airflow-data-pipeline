@@ -2,10 +2,10 @@
 .git
 .gitignore
 .dockerignore
-Dockerfile
+infra/airflow/Dockerfile
 docker-compose.yml
-compose.yml
-compose.*.yml
+infra/airflow/compose.yml
+infra/airflow/compose.*.yml
 
 # Environment files and Secrets
 .env
@@ -35,7 +35,7 @@ dist/
 *.so
 
 # Testing artifacts and coverage reports
-tests/
+airflow/tests/
 .pytest_cache/
 .coverage
 htmlcov/

@@ -51,11 +51,14 @@ x-airflow-common:
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
   # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.0.1}
   image: likh/airflow-data-pipeline:${IMAGE_TAG:-latest}
-  env_file:
-    - .env
   environment:
     &airflow-common-env
     PYTHONPATH: /opt/airflow
+    POSTGRES_HOST: ${POSTGRES_HOST}
+    POSTGRES_DB: ${POSTGRES_DB}
+    POSTGRES_USER: ${POSTGRES_USER}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    POSTGRES_PORT: ${POSTGRES_PORT:-5432}
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${AIRFLOW_POSTGRES_USER}:${AIRFLOW_POSTGRES_PASSWORD}@${AIRFLOW_POSTGRES_HOST}/${AIRFLOW_POSTGRES_DB}
@@ -76,11 +79,11 @@ x-airflow-common:
     # The following line can be used to set a custom config file, stored in the local config folder
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
   volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
-    - ${AIRFLOW_PROJ_DIR:-.}/pipelines:/opt/airflow/pipelines
-    - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
-    - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
-    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+    - ${AIRFLOW_PROJ_DIR:-../..}/airflow/dags:/opt/airflow/dags
+    - ${AIRFLOW_PROJ_DIR:-../..}/airflow/pipelines:/opt/airflow/pipelines
+    - ${AIRFLOW_PROJ_DIR:-../..}/logs:/opt/airflow/logs
+    - ${AIRFLOW_PROJ_DIR:-../..}/config:/opt/airflow/config
+    - ${AIRFLOW_PROJ_DIR:-../..}/airflow/plugins:/opt/airflow/plugins
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -94,8 +97,6 @@ x-airflow-common:
 services:
   postgres:
     image: postgres:15.13
-    env_file:
-      - .env
     environment:
       POSTGRES_USER: ${AIRFLOW_POSTGRES_USER}
       POSTGRES_PASSWORD: ${AIRFLOW_POSTGRES_PASSWORD}
@@ -347,8 +348,6 @@ services:
     image: postgres:15.13
     ports:
       - "5432:5432"
-    env_file:
-      - .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -371,8 +370,8 @@ services:
     environment:
       POSTGRES_CONNECTION_STRING: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT:-5432}/${POSTGRES_DB}
     volumes:
-      - ./alembic:/app/alembic
-      - ./alembic.ini:/app/alembic.ini
+      - ../../alembic:/app/alembic
+      - ../../alembic.ini:/app/alembic.ini
     depends_on:
       app-postgres:
         condition: service_healthy
