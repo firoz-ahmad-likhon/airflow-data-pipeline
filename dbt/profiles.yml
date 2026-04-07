@@ -1,0 +1,12 @@
+dbt:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: app-postgres
+      port: 5432
+      user: likh
+      password: likh
+      dbname: postgres
+      schema: public
+      threads: 4

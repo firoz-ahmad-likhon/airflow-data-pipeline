@@ -4,6 +4,11 @@ x-airflow-common-dev: &airflow-common-dev
     dockerfile: infra/airflow/Dockerfile
     target: ${ENV:-dev}
 
+x-dbt-common-dev: &dbt-common-dev
+  build:
+    context: .
+    dockerfile: infra/dbt/Dockerfile
+
 x-airflow-volumes: &airflow-volumes
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/airflow/tests:/opt/airflow/tests
@@ -33,3 +38,9 @@ services:
 
   flower:
     <<: *airflow-common-dev
+
+  dbt-init:
+    <<: *dbt-common-dev
+
+  dbt:
+    <<: *dbt-common-dev

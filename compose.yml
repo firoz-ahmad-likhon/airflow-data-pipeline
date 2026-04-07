@@ -380,6 +380,94 @@ services:
     networks:
       - airflow-net
 
+  dbt-init:
+    image: likh/airflow-dbt-pipeline-dbt:${IMAGE_TAG:-latest}
+    working_dir: /opt/dbt
+    environment:
+      DBT_PROJECT_NAME: dbt
+      DBT_PROFILES_DIR: /opt/dbt
+      DBT_POSTGRES_HOST: ${POSTGRES_HOST}
+      DBT_POSTGRES_DBNAME: ${POSTGRES_DB}
+      DBT_POSTGRES_USER: ${POSTGRES_USER}
+      DBT_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DBT_POSTGRES_PORT: ${POSTGRES_PORT}
+      DBT_POSTGRES_SCHEMA: ${POSTGRES_SCHEMA}
+    volumes:
+      - ${AIRFLOW_PROJ_DIR:-.}/dbt:/opt/dbt
+    depends_on:
+      app-postgres:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        if [ ! -f "/opt/dbt/dbt_project.yml" ]; then
+          echo "Initializing dbt project in /opt/dbt with project name: $${DBT_PROJECT_NAME}"
+          rm -rf /tmp/dbt-init
+          mkdir -p /tmp/dbt-init
+          cd /tmp/dbt-init
+          dbt init --project-name "$${DBT_PROJECT_NAME}" --skip-profile-setup
+          shopt -s dotglob
+          mv "/tmp/dbt-init/$${DBT_PROJECT_NAME}"/* /opt/dbt/
+        else
+          echo "dbt project already exists at /opt/dbt"
+        fi
+
+        if [ ! -f /opt/dbt/profiles.yml ]; then
+          echo "Creating /opt/dbt/profiles.yml"
+          {
+            echo "$${DBT_PROJECT_NAME}:"
+            echo "  target: dev"
+            echo "  outputs:"
+            echo "    dev:"
+            echo "      type: postgres"
+            echo "      host: $${DBT_POSTGRES_HOST}"
+            echo "      port: $${DBT_POSTGRES_PORT}"
+            echo "      user: $${DBT_POSTGRES_USER}"
+            echo "      password: $${DBT_POSTGRES_PASSWORD}"
+            echo "      dbname: $${DBT_POSTGRES_DBNAME}"
+            echo "      schema: $${DBT_POSTGRES_SCHEMA}"
+            echo "      threads: 4"
+          } > /opt/dbt/profiles.yml
+        else
+          echo "/opt/dbt/profiles.yml already exists"
+        fi
+    restart: "no"
+    networks:
+      - airflow-net
+
+  dbt:
+    image: likh/airflow-dbt-pipeline-dbt:${IMAGE_TAG:-latest}
+    working_dir: /opt/dbt
+    environment:
+      DBT_PROJECT_NAME: dbt
+      DBT_PROFILES_DIR: /opt/dbt
+      DBT_POSTGRES_HOST: ${POSTGRES_HOST}
+      DBT_POSTGRES_DBNAME: ${POSTGRES_DB}
+      DBT_POSTGRES_USER: ${POSTGRES_USER}
+      DBT_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DBT_POSTGRES_PORT: ${POSTGRES_PORT}
+      DBT_POSTGRES_SCHEMA: ${DBT_POSTGRES_SCHEMA}
+    volumes:
+      - ${AIRFLOW_PROJ_DIR:-.}/dbt:/opt/dbt
+    depends_on:
+      app-postgres:
+        condition: service_healthy
+      dbt-init:
+        condition: service_completed_successfully
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        dbt debug --project-dir /opt/dbt --profiles-dir /opt/dbt
+        tail -f /dev/null
+    healthcheck:
+      test: ["CMD-SHELL", "dbt --version >/dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - airflow-net
+
 volumes:
   postgres-db-volume:
   postgres-data:
