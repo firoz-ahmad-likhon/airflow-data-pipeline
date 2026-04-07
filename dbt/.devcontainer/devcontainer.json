@@ -1,0 +1,24 @@
+{
+  "name": "dbt-fusion-dev",
+  "dockerComposeFile": [
+    "../../compose.yml",
+    "../../compose.override.yml"
+  ],
+  "service": "dbt",
+  "runServices": [
+    "app-postgres",
+    "dbt-init",
+    "dbt"
+  ],
+  "workspaceFolder": "/opt/dbt",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbtlabsinc.dbt",
+        "ms-python.python"
+      ]
+    }
+  }
+}
