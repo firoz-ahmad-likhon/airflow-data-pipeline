@@ -8,6 +8,21 @@ x-dbt-common-dev: &dbt-common-dev
   build:
     context: .
     dockerfile: infra/dbt/Dockerfile
+  working_dir: /opt/dbt
+  environment:
+    DBT_PROJECT_NAME: dbt
+    DBT_PROFILES_DIR: /opt/dbt
+    DBT_POSTGRES_HOST: ${POSTGRES_HOST}
+    DBT_POSTGRES_DBNAME: ${POSTGRES_DB}
+    DBT_POSTGRES_USER: ${POSTGRES_USER}
+    DBT_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    DBT_POSTGRES_PORT: ${POSTGRES_PORT}
+    DBT_POSTGRES_SCHEMA: ${DBT_POSTGRES_SCHEMA}
+    DBT_THREADS: ${DBT_THREADS}
+  volumes:
+    - ${AIRFLOW_PROJ_DIR:-.}/dbt:/opt/dbt
+  networks:
+    - airflow-net
 
 x-airflow-volumes: &airflow-volumes
   volumes:
@@ -41,19 +56,6 @@ services:
 
   dbt-init:
     <<: *dbt-common-dev
-    working_dir: /opt/dbt
-    environment:
-      DBT_PROJECT_NAME: dbt
-      DBT_PROFILES_DIR: /opt/dbt
-      DBT_POSTGRES_HOST: ${POSTGRES_HOST}
-      DBT_POSTGRES_DBNAME: ${POSTGRES_DB}
-      DBT_POSTGRES_USER: ${POSTGRES_USER}
-      DBT_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      DBT_POSTGRES_PORT: ${POSTGRES_PORT}
-      DBT_POSTGRES_SCHEMA: ${POSTGRES_SCHEMA}
-      DBT_THREADS: ${DBT_THREADS}
-    volumes:
-      - ${AIRFLOW_PROJ_DIR:-.}/dbt:/opt/dbt
     entrypoint: ["/bin/bash", "-c"]
     command:
       - |
@@ -88,24 +90,9 @@ services:
           echo "/opt/dbt/profiles.yml already exists"
         fi
     restart: "no"
-    networks:
-      - airflow-net
 
   dbt:
     <<: *dbt-common-dev
-    working_dir: /opt/dbt
-    environment:
-      DBT_PROJECT_NAME: dbt
-      DBT_PROFILES_DIR: /opt/dbt
-      DBT_POSTGRES_HOST: ${POSTGRES_HOST}
-      DBT_POSTGRES_DBNAME: ${POSTGRES_DB}
-      DBT_POSTGRES_USER: ${POSTGRES_USER}
-      DBT_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      DBT_POSTGRES_PORT: ${POSTGRES_PORT}
-      DBT_POSTGRES_SCHEMA: ${DBT_POSTGRES_SCHEMA}
-      DBT_THREADS: ${DBT_THREADS}
-    volumes:
-      - ${AIRFLOW_PROJ_DIR:-.}/dbt:/opt/dbt
     depends_on:
       app-postgres:
         condition: service_healthy
@@ -122,5 +109,3 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
-    networks:
-      - airflow-net
