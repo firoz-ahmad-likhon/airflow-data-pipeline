@@ -11,7 +11,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the code
 COPY airflow/dags/ dags/
 COPY airflow/pipelines/ pipelines/
-COPY airflow/plugins/ plugins/
 COPY alembic/ alembic/
 COPY alembic.ini .
 
