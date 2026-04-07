@@ -2,17 +2,17 @@ import logging
 from typing import Any
 
 import pendulum
-from airflow.exceptions import AirflowException
-from airflow.models import DagRun
-from airflow.sdk import Param, dag, task
-from airflow.utils.types import DagRunType
-from sqlalchemy import insert
-
 from pipelines.database.connection import get_session
 from pipelines.database.models import WindAndSolarPowerGeneration
 from pipelines.services.wind_solar_api import WindSolarAPI
 from pipelines.utils.api_helper import APIHelper as Helper
 from pipelines.validations.parameter_validation import ParameterValidator as Validator
+from sqlalchemy import insert
+
+from airflow.exceptions import AirflowException
+from airflow.models import DagRun
+from airflow.sdk import Param, dag, task
+from airflow.utils.types import DagRunType
 
 # Use the Airflow task logger
 logger = logging.getLogger("dag_wind_and_solar_power_generation")
@@ -82,7 +82,7 @@ def wind_and_solar_power_generation() -> None:
     def extract(p: dict[str, Any]) -> dict[str, Any]:
         """Fetch the JSON data from the API and push it to XCom for downstream tasks."""
         try:
-            data = WindSolarAPI().fetch_json(
+            data: dict[str, Any] = WindSolarAPI().fetch_json(
                 p["date_from"],
                 p["date_to"],
             )

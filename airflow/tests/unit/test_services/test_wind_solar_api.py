@@ -3,7 +3,6 @@ from typing import Any
 
 import pendulum
 import pytest
-
 from pipelines.services.wind_solar_api import WindSolarAPI
 
 

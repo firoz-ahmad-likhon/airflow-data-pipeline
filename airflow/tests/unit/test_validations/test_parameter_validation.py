@@ -1,5 +1,4 @@
 import pytest
-
 from pipelines.validations.parameter_validation import ParameterValidator
 
 

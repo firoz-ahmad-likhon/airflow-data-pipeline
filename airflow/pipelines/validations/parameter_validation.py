@@ -2,7 +2,6 @@ import re
 from typing import cast
 
 import pendulum
-
 from pipelines.validations.validator import Validator
 
 

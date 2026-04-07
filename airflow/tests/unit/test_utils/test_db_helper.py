@@ -1,5 +1,4 @@
 import pytest
-
 from pipelines.utils.db_helper import DBHelper
 
 
