@@ -82,7 +82,7 @@ pre-commit install
 1. Clone the repo.
 2. Copy the `.env-example` to `.env` and update the values as per your environment.
 3. Set `ENV=prod` in `.env`
-4. Set `IMAGE_TAG` in `.env` (for example, `IMAGE_TAG=v1.0.0`).
+4. Set `IMAGE_TAG` in `.env` (for example, `IMAGE_TAG=2.0.0`).
 5. Pull the image:
    ```
    docker compose -f compose.yml pull
