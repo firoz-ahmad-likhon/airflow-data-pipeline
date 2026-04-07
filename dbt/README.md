@@ -1,4 +1,4 @@
-# 🥪 The Jaffle Shop 🦘
+# ðŸ¥ª The Jaffle Shop ðŸ¦˜
 
 _powered by the dbt Fusion engine_
 

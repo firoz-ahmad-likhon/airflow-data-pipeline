@@ -1,7 +1,7 @@
-## 🚀 Description
+## ðŸš€ Description
 Describe the pr.
 
 Fixes # (issue)
 
-## 🧪 How Has This Been Tested?
+## ðŸ§ª How Has This Been Tested?
 Test steps.
