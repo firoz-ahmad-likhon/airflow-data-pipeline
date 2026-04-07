@@ -2,10 +2,7 @@
 .git
 .gitignore
 .dockerignore
-infra/airflow/Dockerfile
 docker-compose.yml
-infra/airflow/compose.yml
-infra/airflow/compose.*.yml
 
 # Environment files and Secrets
 .env
