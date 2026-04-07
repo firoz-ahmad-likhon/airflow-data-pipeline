@@ -14,4 +14,4 @@ RUN apt-get update \
 RUN curl -fsSL https://public.cdn.getdbt.com/fs/install/install.sh | bash -s -- --update \
     && dbt --version
 
-CMD ["bash", "-c", "dbt --version && tail -f /dev/null"]
+CMD ["dbt", "--version"]

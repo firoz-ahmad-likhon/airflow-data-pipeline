@@ -1,6 +1,9 @@
 {
   "name": "dbt-fusion-dev",
-  "dockerComposeFile": "../../compose.yml",
+  "dockerComposeFile": [
+    "../../compose.yml",
+    "../../compose.override.yml"
+  ],
   "service": "dbt",
   "runServices": [
     "app-postgres",
