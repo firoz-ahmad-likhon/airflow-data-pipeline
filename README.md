@@ -16,7 +16,7 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
 3. Set `ENV=dev` in `.env`
 4. Up the airflow docker containers:
    ```
-   docker compose --env-file .env -f infra/airflow/compose.yml -f infra/airflow/compose.override.yml up -d --build
+   docker compose --env-file .env -f infra/compose.yml -f infra/compose.override.yml up -d --build
    ```
 
 ## Dag run
@@ -30,7 +30,7 @@ It is recommended to perform unit test before commiting the code. To run unit te
 Pytest:
 
 ```
-docker compose --env-file .env -f infra/airflow/compose.yml -f infra/airflow/compose.override.yml exec airflow-apiserver pytest
+docker compose --env-file .env -f infra/compose.yml -f infra/compose.override.yml exec airflow-apiserver pytest
 ```
 
 DAG loader test:
@@ -85,11 +85,11 @@ pre-commit install
 4. Set `IMAGE_TAG` in `.env` (for example, `IMAGE_TAG=v1.0.0`).
 5. Pull the image:
    ```
-   docker compose --env-file .env -f infra/airflow/compose.yml pull
+   docker compose --env-file .env -f infra/compose.yml pull
    ```
 6. Up the airflow docker containers:
    ```
-   docker compose --env-file .env -f infra/airflow/compose.yml up -d
+   docker compose --env-file .env -f infra/compose.yml up -d
    ```
 
 ## License
