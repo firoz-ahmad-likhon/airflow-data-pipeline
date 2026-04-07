@@ -1,7 +1,7 @@
 x-airflow-common-dev: &airflow-common-dev
   build:
     context: .
-    dockerfile: Dockerfile
+    dockerfile: infra/airflow/Dockerfile
     target: ${ENV:-dev}
 
 x-airflow-volumes: &airflow-volumes
