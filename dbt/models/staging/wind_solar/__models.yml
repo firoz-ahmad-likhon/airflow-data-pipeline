@@ -6,5 +6,24 @@ models:
       tags: ["wind_solar"]
     description: Staging model for raw wind and solar ingestion payloads.
     columns:
+      - name: id
+        description: Unique identifier for the raw ingestion record.
+        data_tests:
+          - not_null
+          - unique
+      - name: ingestion_ts
+        description: UTC timestamp when Airflow ingested the source payload.
+        data_tests:
+          - not_null
+      - name: window_from_utc
+        description: Start of the source request window in UTC.
+        data_tests:
+          - not_null
+      - name: window_to_utc
+        description: End of the source request window in UTC.
+        data_tests:
+          - not_null
       - name: payload_json
         description: Raw JSON payload returned by the source API.
+        data_tests:
+          - not_null
