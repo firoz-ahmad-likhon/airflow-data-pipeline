@@ -1,0 +1,15 @@
+models:
+  - name: wind_and_solar_generation
+    config:
+      materialized: table
+      schema: mart
+      alias: wind_and_solar_generation
+      tags: ["wind_solar"]
+    description: Final mart containing generation quantity by start time and PSR type.
+    columns:
+      - name: start_time
+        description: Start timestamp from the API payload field `startTime`.
+      - name: psr_type
+        description: Generation type from the API payload field `psrType`.
+      - name: quantity
+        description: Reported generation quantity from the API payload field `quantity`.

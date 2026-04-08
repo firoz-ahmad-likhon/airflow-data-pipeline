@@ -1,0 +1,10 @@
+models:
+  - name: stg_wind_solar
+    config:
+      materialized: view
+      schema: staging
+      tags: ["wind_solar"]
+    description: Staging model for raw wind and solar ingestion payloads.
+    columns:
+      - name: payload_json
+        description: Raw JSON payload returned by the source API.
