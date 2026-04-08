@@ -56,8 +56,9 @@ services:
 
   dbt-init:
     <<: *dbt-common-dev
-    entrypoint: ["/bin/bash", "-c"]
     command:
+      - /bin/bash
+      - -c
       - |
         if [ ! -f "/opt/dbt/dbt_project.yml" ]; then
           echo "Initializing dbt project in /opt/dbt with project name: $${DBT_PROJECT_NAME}"
@@ -98,10 +99,11 @@ services:
         condition: service_healthy
       dbt-init:
         condition: service_completed_successfully
-    entrypoint: ["/bin/bash", "-c"]
     command:
+      - /bin/bash
+      - -c
       - |
-        dbt debug --project-dir /opt/dbt --profiles-dir /opt/dbt
+        dbt debug
         tail -f /dev/null
     healthcheck:
       test: ["CMD-SHELL", "dbt --version >/dev/null"]

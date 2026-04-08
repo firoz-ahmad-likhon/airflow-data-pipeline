@@ -1,0 +1,33 @@
+models:
+  - name: wind_and_solar_generation
+    config:
+      materialized: incremental
+      schema: mart
+      alias: wind_and_solar_generation
+      unique_key: ['start_time', 'psr_type'] # composite key for dbt merge
+      indexes:
+        - columns: ['start_time', 'psr_type']
+          unique: true
+      incremental_strategy: merge
+      tags: ["wind_solar"]
+    description: Final mart containing the latest generation quantity by start time and PSR type.
+    # Validate that the final mart keeps one row per event interval and generation type.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - start_time
+              - psr_type
+    columns:
+      - name: start_time
+        description: Start timestamp from the API payload field `startTime`.
+        data_tests:
+          - not_null
+      - name: psr_type
+        description: Generation type from the API payload field `psrType`.
+        data_tests:
+          - not_null
+      - name: quantity
+        description: Reported generation quantity from the API payload field `quantity`.
+        data_tests:
+          - not_null

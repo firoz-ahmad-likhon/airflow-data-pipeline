@@ -1,0 +1,13 @@
+[sqlfluff]
+dialect = postgres
+templater = jinja
+max_line_length = 100
+sql_file_exts = .sql
+exclude_paths = dbt/target/*,dbt/dbt_packages/*
+exclude_rules = ST06
+
+[sqlfluff:templater:jinja]
+apply_dbt_builtins = True
+
+[sqlfluff:layout:type:comma]
+line_position = trailing
