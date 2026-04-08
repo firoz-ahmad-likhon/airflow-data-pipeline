@@ -4,9 +4,9 @@ from typing import Any
 import pendulum
 from pipelines.database.connection import get_session
 from pipelines.database.models import WindAndSolarPowerGeneration
+from pipelines.helper import Helper
 from pipelines.services.wind_solar_api import WindSolarAPI
-from pipelines.utils.api_helper import APIHelper as Helper
-from pipelines.validations.parameter_validation import ParameterValidator as Validator
+from pipelines.validator import ParameterValidator as Validator
 from sqlalchemy import insert
 
 from airflow.exceptions import AirflowException
