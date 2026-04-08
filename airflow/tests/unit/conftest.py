@@ -1,6 +1,7 @@
 from typing import Any
 
 import pytest
+from pipelines.validator import ParameterValidator
 
 
 @pytest.fixture(scope="session")
@@ -46,3 +47,15 @@ def mock_params() -> dict[str, Any]:
         "date_from": "2024-10-15 00:00",
         "date_to": "2024-10-16 00:30",
     }
+
+
+@pytest.fixture
+def parameter_validator(mock_params: dict[str, Any]) -> ParameterValidator:
+    """Initialize the ParameterValidator."""
+    return ParameterValidator(mock_params["date_from"], mock_params["date_to"])
+
+
+@pytest.fixture
+def parameter_validator_with_invalid_dates() -> ParameterValidator:
+    """Initialize the ParameterValidator."""
+    return ParameterValidator("invalid", "2024-10-16 00:30")

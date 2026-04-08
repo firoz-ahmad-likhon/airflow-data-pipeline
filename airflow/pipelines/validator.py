@@ -2,10 +2,9 @@ import re
 from typing import cast
 
 import pendulum
-from pipelines.validations.validator import Validator
 
 
-class ParameterValidator(Validator):
+class ParameterValidator:
     """Validate parameters for the API call.
 
     - To validate the date the date_form and date_to must be the instance of pendulum.DateTime.

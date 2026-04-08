@@ -1,9 +1,7 @@
-from tests.interface.integrity_tester import IntegrityTester
-
 from airflow.models import DagBag
 
 
-class TestWindAndSolarPowerGenerationDAG(IntegrityTester):
+class TestWindAndSolarPowerGenerationDAG:
     """Test the wind_and_solar_power_generation DAG."""
 
     def test_dag_loaded(self, dag_wind_and_solar_power_generation: DagBag) -> None:

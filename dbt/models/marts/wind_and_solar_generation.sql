@@ -1,5 +1,6 @@
 {% set lookback_hours = var('wind_solar_lookback_hours', 6) %}
 
+-- Incremental
 with staged as (
     select *
     from {{ ref('stg_wind_solar') }}

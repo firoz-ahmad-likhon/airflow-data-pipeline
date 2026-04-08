@@ -1,9 +1,24 @@
+from datetime import datetime, timezone
+
+import pendulum
 import pytest
-from pipelines.utils.db_helper import DBHelper
+from pipelines.helper import Helper
 
 
-class TestDBHelper:
+class TestHelper:
     """Test class for DBHelper."""
+
+    def test_date_param(self) -> None:
+        """Test the date_param method."""
+        assert Helper.date_param(
+            pendulum.instance(datetime(2024, 10, 16, 10, 45, tzinfo=timezone.utc)),
+        ) == pendulum.instance(datetime(2024, 10, 16, 9, 0, tzinfo=timezone.utc))
+
+    def test_floor_to_30_min(self) -> None:
+        """Test the floored_to_30_min method."""
+        assert Helper.floor_to_30_min(
+            pendulum.instance(datetime(2024, 10, 16, 10, 45, tzinfo=timezone.utc)),
+        ) == pendulum.instance(datetime(2024, 10, 16, 10, 30, tzinfo=timezone.utc))
 
     @pytest.mark.parametrize(
         ("env_vars", "driver", "expected_url"),
@@ -46,7 +61,7 @@ class TestDBHelper:
         if "POSTGRES_PORT" not in env_vars:
             monkeypatch.delenv("POSTGRES_PORT", raising=False)
 
-        url = DBHelper.database_url(driver) if driver else DBHelper.database_url()
+        url = Helper.database_url(driver) if driver else Helper.database_url()
         assert url == expected_url
 
     def test_database_url_missing_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -60,4 +75,4 @@ class TestDBHelper:
             ValueError,
             match="POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST, and POSTGRES_DB must be set",
         ):
-            DBHelper.database_url()
+            Helper.database_url()
