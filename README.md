@@ -1,12 +1,34 @@
-## Airflow DBT Pipeline
+# Airflow DBT Pipeline
 
-This repository contains Airflow-managed data pipelines that:
+## Problem
+The source API has three practical issues for analytics:
 
-- Ingests data from [API](https://bmrs.elexon.co.uk/actual-or-estimated-wind-and-solar-power-generation).
-- Transform data using dbt.
-- Postgres storage.
+- Data is delayed by about 90 minutes.
+- The response is nested JSON, which is difficult to use directly in BI tools and SQL analysis.
+- Date may be backfilled by large date range, so analytics can become inconsistent unless data is reprocessed.
 
-The pipelines are reliable, scalable and maintainable in real-world data engineering workflows.
+This becomes a real business problem when teams want trusted metrics such as peak generation, daily average generation,
+and 7-day rolling average generation. If each team calculates those differently, reporting starts to drift.
+
+## Solution
+
+This project uses a simple modern analytics pattern:
+
+- Airflow orchestrates the pipeline end to end: it pulls raw data from the [API](https://bmrs.elexon.co.uk/actual-or-estimated-wind-and-solar-power-generation) on a schedule and can also orchestrate the dbt transformation pipeline.
+- Raw snapshots are kept first, which makes late-arriving or revised records safe to reprocess.
+- dbt transforms the nested JSON into a clean model with the latest generation quantity by `start_time` and `psr_type`.
+- A configurable lookback window allows recent data to be rebuilt like a controlled backfill when the source is delayed.
+- The final model is ready for BI use and can support a lightweight semantic layer for reusable metrics.
+
+## Semantic Layer
+
+The dbt model is designed to support a lightweight semantic layer or BI metrics on top of the cleaned dataset.
+
+Candidate metric names:
+
+- `daily_average_generation`
+- `rolling_7_day_average_generation`
+- `peak_generation`
 
 ## Prerequisites
 - Docker installed.
