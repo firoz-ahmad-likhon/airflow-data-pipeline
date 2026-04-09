@@ -5,8 +5,7 @@ select
     window_to_utc,
     request_url,
     http_status,
-    payload_json::jsonb as payload_json,
-    load_date
+    payload_json::jsonb as payload_json
 from {{ source('ingestion', 'wind_and_solar_power_generation') }}
 where
     payload_json is not null
