@@ -1,9 +1,9 @@
 models:
-  - name: wind_and_solar_generation
+  - name: power_generation
     config:
       materialized: incremental
       schema: mart
-      alias: wind_and_solar_generation
+      alias: power_generation
       unique_key: ['start_time', 'psr_type'] # tells dbt how to merge incremental rows - composite key
       incremental_strategy: merge
       tags: ["wind_solar"]
