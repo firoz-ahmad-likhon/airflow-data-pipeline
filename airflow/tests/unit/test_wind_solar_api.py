@@ -3,7 +3,7 @@ from typing import Any
 
 import pendulum
 import pytest
-from pipelines.services.wind_solar_api import WindSolarAPI
+from pipelines.wind_solar_api import WindSolarAPI
 
 
 class TestWindSolarAPI:
@@ -39,7 +39,7 @@ class TestWindSolarAPI:
         to_date = pendulum.datetime(2024, 10, 12)
 
         # Monkeypatch the get method to return the mocked response
-        monkeypatch.setattr("pipelines.services.wind_solar_api.requests.get", mock_get)
+        monkeypatch.setattr("pipelines.wind_solar_api.requests.get", mock_get)
 
         # Call the method that fetches the JSON
         result = WindSolarAPI().fetch_json(from_date, to_date)
