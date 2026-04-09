@@ -49,5 +49,4 @@ class WindSolarAPI:
             "request_url": url,
             "http_status": response.status_code,
             "payload_json": json.dumps(payload),
-            "load_date": pendulum.now(tz="UTC").to_date_string(),
         }

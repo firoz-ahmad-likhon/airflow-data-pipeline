@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, DateTime, Integer, Text, text
+from sqlalchemy import Column, DateTime, Integer, Text, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeMeta, declarative_base
 
@@ -16,10 +16,9 @@ class WindAndSolarPowerGeneration(Base):
         nullable=False,
         server_default=text("gen_random_uuid()"),
     )
-    ingestion_ts = Column(DateTime(timezone=True), nullable=True)
+    ingestion_ts = Column(DateTime(timezone=True), nullable=True, index=True)
     window_from_utc = Column(DateTime(timezone=True), nullable=False)
     window_to_utc = Column(DateTime(timezone=True), nullable=False)
     request_url = Column(Text, nullable=True)
     http_status = Column(Integer, nullable=True)
     payload_json = Column(Text, nullable=True)
-    load_date = Column(Date, nullable=False)
