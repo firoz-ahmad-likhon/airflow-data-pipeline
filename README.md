@@ -1,11 +1,34 @@
-## Airflow Data Pipeline
+# Airflow DBT Pipeline
 
-This repository contains an Airflow-based data pipeline that:
+## Problem
+The source API has three practical issues for analytics:
 
-- Ingests data from [API](https://bmrs.elexon.co.uk/actual-or-estimated-wind-and-solar-power-generation).
-- Stores data in a Postgres database.
+- Data is delayed by about 90 minutes.
+- The response is nested JSON, which is difficult to use directly in BI tools and SQL analysis.
+- Date may be backfilled by large date range, so analytics can become inconsistent unless data is reprocessed.
 
-The pipeline is modular, reliable, and designed for extensibility in real-world data engineering workflows.
+This becomes a real business problem when teams want trusted metrics such as peak generation, daily average generation,
+and 7-day rolling average generation. If each team calculates those differently, reporting starts to drift.
+
+## Solution
+
+This project uses a simple modern analytics pattern:
+
+- Airflow orchestrates the pipeline end to end: it pulls raw data from the [API](https://bmrs.elexon.co.uk/actual-or-estimated-wind-and-solar-power-generation) on a schedule and can also orchestrate the dbt transformation pipeline.
+- Raw snapshots are kept first, which makes late-arriving or revised records safe to reprocess.
+- dbt transforms the nested JSON into a clean model with the latest generation quantity by `start_time` and `psr_type`.
+- A configurable lookback window allows recent data to be rebuilt like a controlled backfill when the source is delayed.
+- The final model is ready for BI use and can support a lightweight semantic layer for reusable metrics.
+
+## Semantic Layer
+
+The dbt model is designed to support a lightweight semantic layer or BI metrics on top of the cleaned dataset.
+
+Candidate metric names:
+
+- `daily_average_generation`
+- `rolling_7_day_average_generation`
+- `peak_generation`
 
 ## Prerequisites
 - Docker installed.
@@ -14,15 +37,11 @@ The pipeline is modular, reliable, and designed for extensibility in real-world 
 1. Clone the repo.
 2. Copy the `.env-example` to `.env` and update the values as per your environment.
 3. Set `ENV=dev` in `.env`
-4. Up the airflow docker containers:
+4. Set `IMAGE_TAG` in `.env` (for example, `IMAGE_TAG=2.0.0`)
+5. Up the airflow docker containers:
    ```
    docker compose up -d --build
    ```
-
-## Dag run
-- When you trigger the dag manually, the input date time will UTC time.
-- When you trigger the backfill dag, the input date time will be in the local time zone. So, output will be converted to UTC time.
-- Logical time is in UTC time.
 
 ## Testing
 It is recommended to perform unit test before commiting the code. To run unit test, ensure `ENV=dev` in `.env`.
@@ -36,22 +55,18 @@ docker compose exec airflow-apiserver pytest
 DAG loader test:
 
 ```
-python dags/wind_and_solar_power_generation.py
-```
-
-```
-time python dags/wind_and_solar_power_generation.py
+docker compose exec airflow-apiserver python dags/wind_and_solar_power_generation.py
 ```
 
 Dag Run test:
 ```
-airflow dags test wind_and_solar_power_generation
+docker compose exec airflow-apiserver airflow dags test wind_and_solar_power_generation
 ```
 params: `--conf '{"date_from":"2025-01-01T00:00:00Z","date_to":"2025-01-01T00:30:00Z"}'`
 
 Task test:
 ```
-airflow tasks test wind_and_solar_power_generation parameterize
+docker compose exec airflow-apiserver airflow tasks test wind_and_solar_power_generation parameterize
 ```
 params: `--task-params '{"date_from":"2025-01-01T00:00:00Z","date_to":"2025-01-01T00:30:00Z"}'`
 
@@ -77,20 +92,6 @@ Install:
 pip install pre-commit
 pre-commit install
 ```
-
-## Production
-1. Clone the repo.
-2. Copy the `.env-example` to `.env` and update the values as per your environment.
-3. Set `ENV=prod` in `.env`
-4. Set `IMAGE_TAG` in `.env` (for example, `IMAGE_TAG=2.0.0`).
-5. Pull the image:
-   ```
-   docker compose -f compose.yml pull
-   ```
-6. Up the airflow docker containers:
-   ```
-   docker compose -f compose.yml up -d
-   ```
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
