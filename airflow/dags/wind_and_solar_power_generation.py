@@ -103,7 +103,6 @@ def wind_and_solar_power_generation() -> None:
                     "request_url": data["request_url"],
                     "http_status": data["http_status"],
                     "payload_json": data["payload_json"],
-                    "load_date": pendulum.parse(data["load_date"]).date(),
                 }
                 stmt = insert(WindAndSolarPowerGeneration).values(record)
                 db.execute(stmt)

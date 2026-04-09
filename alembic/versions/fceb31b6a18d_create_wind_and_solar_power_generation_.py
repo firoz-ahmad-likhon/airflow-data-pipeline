@@ -1,7 +1,6 @@
 """create wind_and_solar_power_generation table.
 
 Revision ID: fceb31b6a18d
-Revises: 3f7c61939b47
 Create Date: 2026-04-05 09:01:41.084769
 
 """
@@ -37,20 +36,19 @@ def upgrade() -> None:
         sa.Column("request_url", sa.Text()),
         sa.Column("http_status", sa.Integer()),
         sa.Column("payload_json", sa.Text()),
-        sa.Column("load_date", sa.Date(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_wind_and_solar_power_generation_load_date",
+        "ix_wind_and_solar_power_generation_ingestion_ts",
         "wind_and_solar_power_generation",
-        ["load_date"],
+        ["ingestion_ts"],
     )
 
 
 def downgrade() -> None:
     """Drop the table."""
     op.drop_index(
-        "ix_wind_and_solar_power_generation_load_date",
+        "ix_wind_and_solar_power_generation_ingestion_ts",
         table_name="wind_and_solar_power_generation",
     )
     op.drop_table("wind_and_solar_power_generation")
