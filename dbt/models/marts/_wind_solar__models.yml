@@ -4,14 +4,13 @@ models:
       materialized: incremental
       schema: mart
       alias: wind_and_solar_generation
-      unique_key: ['start_time', 'psr_type'] # composite key for dbt merge
-      indexes:
-        - columns: ['start_time', 'psr_type']
-          unique: true
+      unique_key: ['start_time', 'psr_type'] # tells dbt how to merge incremental rows - composite key
       incremental_strategy: merge
       tags: ["wind_solar"]
+      post_hook:
+        - "create unique index if not exists wind_and_solar_generation_start_time_psr_type_idx on {{ this }} (start_time, psr_type)"
     description: Final mart containing the latest generation quantity by start time and PSR type.
-    # Validate that the final mart keeps one row per event interval and generation type.
+    # Validate composite uniqueness.
     data_tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
