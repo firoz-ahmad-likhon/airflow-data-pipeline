@@ -5,6 +5,7 @@ x-airflow-common-dev: &airflow-common-dev
     target: ${ENV:-dev}
 
 x-dbt-common-dev: &dbt-common-dev
+  image: dbt-pipeline:${IMAGE_TAG:-latest}
   build:
     context: .
     dockerfile: infra/dbt/Dockerfile

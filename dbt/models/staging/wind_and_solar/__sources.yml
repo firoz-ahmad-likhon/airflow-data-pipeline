@@ -1,0 +1,6 @@
+sources:
+  - name: elexon
+    schema: "{{ env_var('DBT_POSTGRES_SCHEMA', 'public') }}"
+    tables:
+      - name: bmrs_datasets
+        description: Raw bmrs datasets from ELEXON table populated by the Airflow pipeline.

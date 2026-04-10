@@ -1,5 +1,5 @@
 models:
-  - name: stg_wind_solar
+  - name: stg_wind_solar_power
     config:
       materialized: view
       schema: staging

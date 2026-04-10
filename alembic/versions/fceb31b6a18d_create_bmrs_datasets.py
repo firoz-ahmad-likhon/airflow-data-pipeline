@@ -1,4 +1,4 @@
-"""create wind_and_solar_power_generation table.
+"""create bmrs_datasets table.
 
 Revision ID: fceb31b6a18d
 Create Date: 2026-04-05 09:01:41.084769
@@ -23,7 +23,7 @@ def upgrade() -> None:
     """Create the table."""
     op.execute('CREATE EXTENSION IF NOT EXISTS "pgcrypto";')
     op.create_table(
-        "wind_and_solar_power_generation",
+        "bmrs_datasets",
         sa.Column(
             "id",
             UUID(as_uuid=True),
@@ -33,14 +33,15 @@ def upgrade() -> None:
         sa.Column("ingestion_ts", sa.TIMESTAMP(timezone=True)),
         sa.Column("window_from_utc", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.Column("window_to_utc", sa.TIMESTAMP(timezone=True), nullable=False),
+        sa.Column("data_type", sa.Text()),
         sa.Column("request_url", sa.Text()),
         sa.Column("http_status", sa.Integer()),
         sa.Column("payload_json", sa.Text()),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_wind_and_solar_power_generation_ingestion_ts",
-        "wind_and_solar_power_generation",
+        "ix_bmrs_datasets_ingestion_ts",
+        "bmrs_datasets",
         ["ingestion_ts"],
     )
 
@@ -48,7 +49,7 @@ def upgrade() -> None:
 def downgrade() -> None:
     """Drop the table."""
     op.drop_index(
-        "ix_wind_and_solar_power_generation_ingestion_ts",
-        table_name="wind_and_solar_power_generation",
+        "ix_bmrs_datasets_ingestion_ts",
+        table_name="bmrs_datasets",
     )
-    op.drop_table("wind_and_solar_power_generation")
+    op.drop_table("bmrs_datasets")
