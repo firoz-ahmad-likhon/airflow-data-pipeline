@@ -1,6 +1,0 @@
-sources:
-  - name: ingestion
-    schema: "{{ env_var('DBT_POSTGRES_SCHEMA', 'public') }}"
-    tables:
-      - name: wind_and_solar_power_generation
-        description: Raw ingestion table populated by the Airflow pipeline.

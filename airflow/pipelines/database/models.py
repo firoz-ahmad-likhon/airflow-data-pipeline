@@ -5,10 +5,10 @@ from sqlalchemy.orm import DeclarativeMeta, declarative_base
 Base: DeclarativeMeta = declarative_base()
 
 
-class WindAndSolarPowerGeneration(Base):
-    """Wind and solar power generation ingestion table."""
+class BmrsDataset(Base):
+    """Raw BMRS dataset ingestion table."""
 
-    __tablename__ = "wind_and_solar_power_generation"
+    __tablename__ = "bmrs_datasets"
 
     id = Column(
         UUID(as_uuid=True),
@@ -19,6 +19,7 @@ class WindAndSolarPowerGeneration(Base):
     ingestion_ts = Column(DateTime(timezone=True), nullable=True, index=True)
     window_from_utc = Column(DateTime(timezone=True), nullable=False)
     window_to_utc = Column(DateTime(timezone=True), nullable=False)
+    data_type = Column(Text, nullable=True)
     request_url = Column(Text, nullable=True)
     http_status = Column(Integer, nullable=True)
     payload_json = Column(Text, nullable=True)

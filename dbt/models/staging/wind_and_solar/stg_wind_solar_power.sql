@@ -6,7 +6,8 @@ select
     request_url,
     http_status,
     payload_json::jsonb as payload_json
-from {{ source('ingestion', 'wind_and_solar_power_generation') }}
+from {{ source('elexon', 'bmrs_datasets') }}
 where
     payload_json is not null
+    and data_type = 'wind_and_solar_power'
     and http_status = 200

@@ -3,7 +3,7 @@
 -- Incremental
 with staged as (
     select *
-    from {{ ref('stg_wind_solar') }}
+    from {{ ref('stg_wind_solar_power') }}
     {% if is_incremental() %}
         where ingestion_ts >= now() - interval '{{ lookback_hours }} hour'
     {% endif %}
@@ -34,7 +34,7 @@ typed as (
     from expanded
 ),
 
--- Keep the latest ingested row for each event-time and generation-type key.
+-- Keep the latest ingested row for each event-time and power-type key.
 ranked as (
     select
         *,

@@ -46,6 +46,7 @@ class WindSolarAPI:
             "ingestion_ts": pendulum.now(tz="UTC").to_iso8601_string(),
             "window_from_utc": from_date.to_iso8601_string(),
             "window_to_utc": to_date.to_iso8601_string(),
+            "data_type": "wind_and_solar_power",
             "request_url": url,
             "http_status": response.status_code,
             "payload_json": json.dumps(payload),

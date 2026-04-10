@@ -3,7 +3,7 @@ from typing import Any
 
 import pendulum
 from pipelines.database.connection import get_session
-from pipelines.database.models import WindAndSolarPowerGeneration
+from pipelines.database.models import BmrsDataset
 from pipelines.helper import Helper
 from pipelines.validator import ParameterValidator as Validator
 from pipelines.wind_solar_api import WindSolarAPI
@@ -100,11 +100,12 @@ def wind_and_solar_power_generation() -> None:
                     "ingestion_ts": pendulum.parse(data["ingestion_ts"]),
                     "window_from_utc": pendulum.parse(data["window_from_utc"]),
                     "window_to_utc": pendulum.parse(data["window_to_utc"]),
+                    "data_type": data["data_type"],
                     "request_url": data["request_url"],
                     "http_status": data["http_status"],
                     "payload_json": data["payload_json"],
                 }
-                stmt = insert(WindAndSolarPowerGeneration).values(record)
+                stmt = insert(BmrsDataset).values(record)
                 db.execute(stmt)
                 db.commit()
             logger.info("Data sync successful")
