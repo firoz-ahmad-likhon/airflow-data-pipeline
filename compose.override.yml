@@ -4,24 +4,24 @@ x-airflow-common-dev: &airflow-common-dev
     dockerfile: infra/airflow/Dockerfile
     target: ${ENV:-dev}
 
+x-dbt-common-env: &dbt-common-env
+  DBT_POSTGRES_HOST: ${POSTGRES_HOST}
+  DBT_POSTGRES_DBNAME: ${POSTGRES_DB}
+  DBT_POSTGRES_USER: ${POSTGRES_USER}
+  DBT_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  DBT_POSTGRES_PORT: ${POSTGRES_PORT}
+  DBT_POSTGRES_SCHEMA: ${DBT_POSTGRES_SCHEMA}
+  DBT_THREADS: ${DBT_THREADS}
+
 x-dbt-common-dev: &dbt-common-dev
-  image: dbt-pipeline:${IMAGE_TAG:-latest}
+  image: likh/dbt-pipeline:${IMAGE_TAG:-latest}
   build:
     context: .
     dockerfile: infra/dbt/Dockerfile
-  working_dir: /opt/dbt
   environment:
-    DBT_PROJECT_NAME: dbt
-    DBT_PROFILES_DIR: /opt/dbt
-    DBT_POSTGRES_HOST: ${POSTGRES_HOST}
-    DBT_POSTGRES_DBNAME: ${POSTGRES_DB}
-    DBT_POSTGRES_USER: ${POSTGRES_USER}
-    DBT_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    DBT_POSTGRES_PORT: ${POSTGRES_PORT}
-    DBT_POSTGRES_SCHEMA: ${DBT_POSTGRES_SCHEMA}
-    DBT_THREADS: ${DBT_THREADS}
+    <<: *dbt-common-env
   volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/dbt:/opt/dbt
+    - ${AIRFLOW_PROJ_DIR:-.}/dbt:/app/dbt
   networks:
     - airflow-net
 
@@ -57,23 +57,26 @@ services:
 
   dbt-init:
     <<: *dbt-common-dev
+    environment:
+      <<: *dbt-common-env
+      DBT_PROJECT_NAME: dbt
     command:
       - /bin/bash
       - -c
       - |
-        if [ ! -f "/opt/dbt/dbt_project.yml" ]; then
-          echo "Initializing dbt project in /opt/dbt with project name: $${DBT_PROJECT_NAME}"
+        if [ ! -f "/app/dbt/dbt_project.yml" ]; then
+          echo "Initializing dbt project in /app/dbt with project name: $${DBT_PROJECT_NAME}"
           rm -rf /tmp/dbt-init
           mkdir -p /tmp/dbt-init
           cd /tmp/dbt-init
           dbt init --project-name "$${DBT_PROJECT_NAME}" --skip-profile-setup
           shopt -s dotglob
-          mv "/tmp/dbt-init/$${DBT_PROJECT_NAME}"/* /opt/dbt/
+          mv "/tmp/dbt-init/$${DBT_PROJECT_NAME}"/* /app/dbt/
         else
-          echo "dbt project already exists at /opt/dbt"
+          echo "dbt project already exists at /app/dbt"
         fi
-        if [ ! -f /opt/dbt/profiles.yml ]; then
-          echo "Creating env-driven /opt/dbt/profiles.yml"
+        if [ ! -f /app/dbt/profiles.yml ]; then
+          echo "Creating env-driven /app/dbt/profiles.yml"
           printf '%s\n' \
             'dbt:' \
             '  target: default' \
@@ -87,9 +90,9 @@ services:
             '      dbname: "{{ env_var('"'"'DBT_POSTGRES_DBNAME'"'"') }}"' \
             '      schema: "{{ env_var('"'"'DBT_POSTGRES_SCHEMA'"'"') }}"' \
             '      threads: "{{ env_var('"'"'DBT_THREADS'"'"', '"'"'4'"'"') | int }}"' \
-            > /opt/dbt/profiles.yml
+            > /app/dbt/profiles.yml
         else
-          echo "/opt/dbt/profiles.yml already exists"
+          echo "/app/dbt/profiles.yml already exists"
         fi
     restart: "no"
 

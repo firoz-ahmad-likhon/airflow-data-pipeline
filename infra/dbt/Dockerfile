@@ -4,12 +4,12 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG DBT_FUSION_VERSION=2.0.0-preview.164
 
-WORKDIR /opt/dbt
+WORKDIR /app/dbt
 
 ENV PATH="/root/.local/bin:${PATH}" \
-    DBT_PROFILES_DIR=/opt/dbt
+    DBT_PROFILES_DIR=/app/dbt
 
-COPY dbt/ /opt/dbt/
+COPY dbt/ .
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends bash git curl ca-certificates libpq5 \
