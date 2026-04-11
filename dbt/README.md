@@ -1,7 +1,8 @@
 # dbt
 
-This dbt project transforms the raw Airflow ingestion table into analytics-ready models for wind and solar power generation.
+This dbt project transforms the raw Airflow ingestion table into analytics-ready models for BMRS data.
 
+For now, dbt is run manually with Docker Compose. Airflow currently handles ingestion only. A dedicated Airflow DAG for dbt orchestration may be added later once the transformation and semantic-layer design are stable.
 
 ## Commands
 
