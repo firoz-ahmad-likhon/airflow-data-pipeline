@@ -1,5 +1,7 @@
 models:
   - name: wind_and_solar_power
+    description: Final mart containing the latest generation quantity by start time and PSR type.
+
     config:
       materialized: incremental
       schema: mart
@@ -8,8 +10,10 @@ models:
       incremental_strategy: merge
       tags: ["wind_solar"]
       post_hook:
-        - "create unique index if not exists wind_and_solar_generation_start_time_psr_type_idx on {{ this }} (start_time, psr_type)"
-    description: Final mart containing the latest generation quantity by start time and PSR type.
+        - >
+          create unique index if not exists
+          wind_and_solar_power_start_time_psr_type_idx
+          on {{ this }} (start_time, psr_type)
     # Validate composite uniqueness.
     data_tests:
       - dbt_utils.unique_combination_of_columns:
@@ -19,7 +23,7 @@ models:
               - psr_type
     columns:
       - name: start_time
-        description: Start timestamp of power generation.
+        description: Start timestamp of the 30-minute power generation interval.
         data_tests:
           - not_null
       - name: psr_type
