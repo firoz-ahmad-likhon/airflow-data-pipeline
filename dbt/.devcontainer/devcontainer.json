@@ -10,7 +10,7 @@
     "dbt-init",
     "dbt"
   ],
-  "workspaceFolder": "/opt/dbt",
+  "workspaceFolder": "/app/dbt",
   "shutdownAction": "stopCompose",
   "remoteUser": "root",
   "customizations": {
