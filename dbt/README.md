@@ -11,8 +11,11 @@ dbt clean
 dbt deps
 dbt parse
 dbt build
+dbt run
 dbt run --select +wind_and_solar_power --vars "{lookback_hours: 12}"
+dbt test
 dbt test --select wind_and_solar_power
+dbt test --select source:elexon.bmrs_datasets
 ```
 
 ## Selector reference

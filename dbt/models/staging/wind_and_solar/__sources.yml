@@ -4,3 +4,8 @@ sources:
     tables:
       - name: bmrs_datasets
         description: Raw bmrs datasets from ELEXON table populated by the Airflow pipeline.
+        data_tests:
+          - row_count_multiple_of:
+              description: Raw row count should be divisible by 3 because the current payload emits three PSR types per time interval.
+              arguments:
+                divisor: 3

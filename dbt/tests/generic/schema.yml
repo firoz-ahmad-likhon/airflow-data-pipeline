@@ -1,0 +1,10 @@
+macros:
+  - name: test_row_count_multiple_of
+    description: Fails when the total row count for a model or source is not divisible by the provided divisor.
+    arguments:
+      - name: model
+        type: string
+        description: The model or source relation under test.
+      - name: divisor
+        type: integer
+        description: The value the total row count must be divisible by. Defaults to 3.
