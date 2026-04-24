@@ -21,6 +21,10 @@ models:
             combination_of_columns:
               - start_time
               - psr_type
+      - row_count_multiple_of:
+          description: Row count should be divisible by 3 because each interval currently has three PSR types.
+          arguments:
+            divisor: 3
     columns:
       - name: start_time
         description: Start timestamp of the 30-minute power generation interval.

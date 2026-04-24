@@ -16,7 +16,7 @@ dbt run --select +wind_and_solar_power --vars "{lookback_hours: 12}"
 dbt run --select tag:wind_solar
 dbt test
 dbt test --select wind_and_solar_power
-dbt test --select source:elexon.bmrs_datasets
+dbt source freshness
 ```
 
 ## Materializations
