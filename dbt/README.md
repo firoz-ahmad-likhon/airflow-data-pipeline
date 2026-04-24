@@ -11,6 +11,12 @@ dbt clean
 dbt deps
 dbt parse
 dbt build
-dbt run --select wind_and_solar_power --vars "{lookback_hours: 12}"
+dbt run --select +wind_and_solar_power --vars "{lookback_hours: 12}"
 dbt test --select wind_and_solar_power
 ```
+
+## Selector reference
+
+- `+my_model`: include upstream dependencies.
+- `my_model+`: include downstream dependents.
+- `+my_model+`: include both upstream and downstream nodes.
