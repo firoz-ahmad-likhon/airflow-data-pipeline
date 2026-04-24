@@ -13,10 +13,24 @@ dbt parse
 dbt build
 dbt run
 dbt run --select +wind_and_solar_power --vars "{lookback_hours: 12}"
+dbt run --select tag:wind_solar
 dbt test
 dbt test --select wind_and_solar_power
 dbt test --select source:elexon.bmrs_datasets
 ```
+
+## Materializations
+
+- `view`: rebuilt each run as a view.
+- `table`: rebuilt each run as a table.
+- `incremental`: updates or inserts into an existing table.
+- `materialized_view`: maintained as a materialized view.
+- `ephemeral`: inlined into downstream models.
+
+## Test
+
+- `generic test`: reusable test defined once and applied in YAML.
+- `singular test`: standalone SQL test for one specific check.
 
 ## Selector reference
 
